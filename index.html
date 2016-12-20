@@ -2,64 +2,20 @@
 <html>
 	<head>
 		<title>Adaptable BlotterJS HTML5 Grid</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
         <link rel="stylesheet" href="grid.css" />
-		<script type="text/javascript" src="jquery.js"></script>
+		<script type="text/javascript" src="utils/jquery.js"></script>
+        <script type="text/javascript" src="utils/Cells.js"></script>
+        <script type="text/javascript" src="utils/Currency.js"></script>
+        <script type="text/javascript" src="utils/DataGenerator.js"></script>
 		<script type="text/javascript" src="BlotterGrid.js"></script>
 	</head>
 	<body>
         <grid></grid>
 		<script type="text/javascript">
 		var g = $('grid').BlotterGrid({
-		    columns: [
-                { field: "tradeId", title: "ID" },
-                { field: "notional", title: "Notional" },
-                { field: "counterparty", title: "Counterparty" },
-                { field: "currency", title: "Currency", style: {width: 100} },
-                { field: "country", title: "Country", style: {width: 200} },
-                { field: "marketPrice", title: "Market Price" },
-                { field: "settlementDate", title: "Settlement Date" },
-                { field: "isLive", title: "Is Live" },
-                { field: "moodysRating", title: "Moodys Rating" },
-                { field: "tradeDate", title: "Trade Date", style: {width: 200} },
-                { field: "bid", title: "Bid" },
-                { field: "ask", title: "Ask"},
-                { field: "occasionalPrice", title: "Occasional Price" },
-                { field: "lastUpdated", title: "Last Updated", style: {width: 450} }
-            ],
-            data: [
-                 {
-                    tradeId: "0294862",
-                    notional: "X",
-                    counterparty: "X",
-                    currency: "X",
-                    country: "X",
-                    marketPrice: "X",
-                    settlementDate: "X",
-                    isLive: "X",
-                    moodysRating: "X",
-                    tradeDate: "X",
-                    bid: "X",
-                    ask: "X",
-                    occasionalPrice: "X",
-                    lastUpdated: "X"
-                },
-                {
-                    tradeId: "0193867",
-                    notional: "Y",
-                    counterparty: "Y",
-                    currency: "Y",
-                    country: "Y",
-                    marketPrice: "Y",
-                    settlementDate: "Y",
-                    isLive: "Y",
-                    moodysRating: "Y",
-                    tradeDate: "Y",
-                    bid: "Y",
-                    ask: "Y",
-                    occasionalPrice: "Y",
-                    lastUpdated: "Y"
-                }
-            ]
+            columns: DataGenerator.columns(),
+            data: DataGenerator.generate(300)
 		});
 		</script>
 	</body>

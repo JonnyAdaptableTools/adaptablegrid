@@ -35,16 +35,12 @@ $.fn.BlotterGrid = function (options) {
 
         var table = $('<table>');  
 
-        // Initialise an ordered columns array
-        var orderedColumns = [];
-
         // Create the headers
         var headers = $('<thead>');
         for (i=0; i<options.columns.length; i++) {
             column = options.columns[i];
             headers.append('<th class="blottergrid blottergrid-header" blotter="' + column.field +'">'
                             + column.title + '</th>');
-            orderedColumns.push(column.field);
         }
         table.append(headers);
 
@@ -53,8 +49,8 @@ $.fn.BlotterGrid = function (options) {
         for (i=0; i<options.data.length; i++) {
             row = options.data[i];
             tr = $('<tr>');
-            for (j=0; j<orderedColumns.length; j++) {
-                tr.append('<td>' + row[orderedColumns[j]] + '</td>');
+            for (j=0; j<options.columns.length; j++) {
+                tr.append('<td>' + Cells.format(row[options.columns[j].field], options.columns[j].format, row) + '</td>');
             }
             body.append(tr);
         }
