@@ -28,7 +28,7 @@ var DataGenerator = {
     generate: function (numberOfRows) {
        
         var arrCounties = ["Kent", "Sussex", "Devon"];
-        var arrCurrencies = ["USD", "GBP", "EUR"];
+        var arrCurrencies = ["USD", "GBP", "EUR", "ILS", "AUD", "CAD"];
         
         // define the return data
         var data = [];
@@ -42,7 +42,7 @@ var DataGenerator = {
             row["currency"] = arrCurrencies[this.getRndNumber(0, arrCurrencies.length)];
             row["price"] = (Math.random() * this.getRndNumber(0, 1000));
             row["county"] = arrCounties[this.getRndNumber(0, arrCounties.length)];
-            row["valuation"] = Math.random() * this.getRndNumber(0, 50) * i;
+            row["valuation"] = Math.random() * this.getRndNumber(0, 50) * (i+1);
             row["created"] = this.randomDate(new Date(2000, 1, 1), new Date());
             row["superwealthy"] = (this.getRndNumber(1, 3) == 1 ? "Y" : "N");
             row["checkbox"] = this.getRndNumber(1, 5);

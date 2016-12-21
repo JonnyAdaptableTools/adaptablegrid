@@ -5,18 +5,21 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
         <link rel="stylesheet" href="grid.css" />
 		<script type="text/javascript" src="utils/jquery.js"></script>
-        <script type="text/javascript" src="utils/Cells.js"></script>
+        <script type="text/javascript" src="utils/Cell.js"></script>
         <script type="text/javascript" src="utils/Currency.js"></script>
         <script type="text/javascript" src="utils/DataGenerator.js"></script>
-		<script type="text/javascript" src="BlotterGrid.js"></script>
+		<script type="text/javascript" src="AdaptableGrid.js"></script>
 	</head>
 	<body>
         <grid></grid>
 		<script type="text/javascript">
-		var g = $('grid').BlotterGrid({
+        console.time('init');
+		var g = $('grid').AdaptableGrid({
             columns: DataGenerator.columns(),
-            data: DataGenerator.generate(300)
+            data: DataGenerator.generate(10000)
 		});
+        g.render(10);
+        console.timeEnd('init');
 		</script>
 	</body>
 </html>
