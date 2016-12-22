@@ -85,7 +85,10 @@ var Cell = function (grid, index) {
             case "$num":
                 return this.getValue().toFixed(format_type[1].split("}")[0]);
             case "$date":
-                return '<input type="text" class="abjsdatepicker" value="' + this.getValue() + '" />';
+                return '<input type="text" class="abjsdatepicker" blotter-format="'+format_type[1].split("}")[0]+'"' +
+                        'readonly="readonly" value="' + this.getValue() + '" />';
+            case "$bool":
+                return '<input type="checkbox" class="abjscheckbox" '+(this.getValue() ? 'checked="checked"' : '')+' />';
             default:
                 return this.getValue();
         }

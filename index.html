@@ -14,13 +14,11 @@
     <body>
         <grid></grid>
         <script type="text/javascript">
-        console.time('init');
         var g = $('grid').AdaptableGrid({
             columns: DataGenerator.columns(),
-            data: DataGenerator.generate(10000)
+            data: DataGenerator.generate(1000)
         });
-        g.render(10);
-        console.timeEnd('init');
+        g.render(20);
         </script>
     </body>
 </html>

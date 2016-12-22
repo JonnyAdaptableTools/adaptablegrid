@@ -9,12 +9,12 @@ var DataGenerator = {
     columns: function () {
         return [
             { field: "code", title: "Code", format: "$txt" },
-            { field: "fullname", title: "Fullname", format: "$txt" },
             { field: "country", title: "Country", format: "$txt" },
             { field: "currency", title: "Currency", format: "$txt" },
             { field: "valuation", title: "Valuation", format: "$num{3}" },
             { field: "price", title: "Price", format: "$price{currency}" },
-            { field: "created", title: "Created", format: "$date{dd/mm/yyyy}" }
+            { field: "paid", title: "Paid", format: "$bool" },
+            { field: "created", title: "Created", format: "$date{dd/mm/yy}" }
         ];
     },
 
@@ -26,26 +26,22 @@ var DataGenerator = {
      * @returns {object[]}
      */
     generate: function (numberOfRows) {
-       
+
         var arrCountries = ["UK", "USA", "Australia", "Israel", "Canada", "Italy", "Spain"];
-        var arrCurrencies = ["USD", "GBP", "EUR", "ILS", "AUD", "CAD"];
+        var arrCurrencies = ["GBP", "USD", "AUD", "ILS", "CAD", "EUR", "EUR"];
         
         // define the return data
         var data = [];
         for (var i = 0; i < numberOfRows; i++) {
             var row = {};
+            rndNo = this.getRndNumber(0, arrCurrencies.length);
             row["code"] = "Code" + i;
-            row["shortname"] = "SN" + i;
-            row["fullname"] = "FullName" + i;
-            row["myimage"] = "fa-bar-chart";
-            row["no_of_children"] = this.getRndNumber(0, 10);
-            row["currency"] = arrCurrencies[this.getRndNumber(0, arrCurrencies.length)];
+            row["currency"] = arrCurrencies[rndNo];
             row["price"] = (Math.random() * this.getRndNumber(0, 1000));
-            row["country"] = arrCountries[this.getRndNumber(0, arrCountries.length)];
+            row["country"] = arrCountries[rndNo];
             row["valuation"] = Math.random() * this.getRndNumber(0, 50) * (i+1);
             row["created"] = this.randomDate(new Date(2000, 1, 1), new Date());
-            row["superwealthy"] = (this.getRndNumber(1, 3) == 1 ? "Y" : "N");
-            row["checkbox"] = this.getRndNumber(1, 5);
+            row["paid"] = Math.round(Math.random());
             data.push(row);
         }
 

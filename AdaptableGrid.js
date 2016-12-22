@@ -22,7 +22,6 @@ $.fn.AdaptableGrid = function (options) {
             styles: null
         }, options);
 
-        
         this.read();
         return this;
         
@@ -35,12 +34,11 @@ $.fn.AdaptableGrid = function (options) {
      */
     this.read = function () {
         
-        console.time('read');
         this.cells = [];
         this.columns = {};
         
         this.width = options.columns.length;
-        this.height = options.data.length;
+        this.height = options.data.length + 1;
         dimension = this.width * this.height;
         
         for (i=0; i<dimension; i++) {
@@ -65,8 +63,6 @@ $.fn.AdaptableGrid = function (options) {
 
         }
 
-        console.timeEnd('read');
-
     }
 
     /**
@@ -77,7 +73,6 @@ $.fn.AdaptableGrid = function (options) {
      */
     this.render = function (num) {
         
-        console.time('render');
         if (num == null) {
             num = this.height - 1;
         }
@@ -128,10 +123,7 @@ $.fn.AdaptableGrid = function (options) {
 
         table += '</table>';
 
-        console.timeEnd('render');
-        console.time('html');
         $(this).html(table);
-        console.timeEnd('html');
         this.applyStyles();
 
     }
@@ -142,9 +134,16 @@ $.fn.AdaptableGrid = function (options) {
      * @returns {null}
      */
     this.applyStyles = function () {
-        console.time('styles');
-        $(this).find('.abjsdatepicker').datepicker();
-        console.timeEnd('styles');
+        $(this).addClass('blotter-grid');
+        $(this).find('.abjsdatepicker').each(function () {
+            el = $(this);
+            el.datepicker({
+                showOn: "button",
+                buttonImageOnly: true,
+                buttonImage: "calendar.png",
+                dateFormat: el.attr('blotter-format')
+            });
+        });
     }
 
     /**
