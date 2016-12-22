@@ -19,7 +19,8 @@ $.fn.AdaptableGrid = function (options) {
             ordering: null,
             pages: null,
             search: null,
-            styles: null
+            styles: null,
+            display: null
         }, options);
 
         this.read();
@@ -74,7 +75,12 @@ $.fn.AdaptableGrid = function (options) {
     this.render = function (num) {
         
         if (num == null) {
-            num = this.height - 1;
+            if (options.display == null) {
+                num = this.height - 1;
+            }
+            else {
+                num = options.display;
+            }
         }
 
         var cellsToDisplay = (num+1)*this.width;
@@ -125,6 +131,7 @@ $.fn.AdaptableGrid = function (options) {
 
         $(this).html(table);
         this.applyStyles();
+        this.editEvents();
 
     }
 
@@ -143,6 +150,25 @@ $.fn.AdaptableGrid = function (options) {
                 buttonImage: "calendar.png",
                 dateFormat: el.attr('blotter-format')
             });
+        });
+    }
+
+    /**
+     * AdaptableGrid.editEvents
+     * When changing any DOM elements, update the cells property
+     * @returns {null}
+     */
+    this.editEvents = function () {
+        gridRef = this;
+        $(this).find('.abjsdatepicker').on('change', function () {
+            cellId = $(this).parents('td[blotter]').attr('blotter').split("abjs")[1];
+            newValue = $(this).val();
+            gridRef.cells[cellId].setValue(newValue);
+        });
+        $(this).find('.abjscheckbox').on('change', function () {
+            cellId = $(this).parents('td[blotter]').attr('blotter').split("abjs")[1];
+            newValue = $(this).is(':checked') ? 1 : 0;
+            gridRef.cells[cellId].setValue(newValue);
         });
     }
 

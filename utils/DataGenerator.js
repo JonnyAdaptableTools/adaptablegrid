@@ -27,7 +27,7 @@ var DataGenerator = {
      */
     generate: function (numberOfRows) {
 
-        var arrCountries = ["UK", "USA", "Australia", "Israel", "Canada", "Italy", "Spain"];
+        var arrCountries = ["United Kingdom", "USA", "Australia", "Israel", "Canada", "Italy", "Spain"];
         var arrCurrencies = ["GBP", "USD", "AUD", "ILS", "CAD", "EUR", "EUR"];
         
         // define the return data

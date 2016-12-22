@@ -8,7 +8,7 @@ body { color: #333; }
 .blotter-grid thead tr { background-color: #f6f6f6 !important; }
 .blotter-grid tr:hover { background-color: #eee; }
 .blotter-grid td { border-top: none; white-space: nowrap; padding: 8px 10px; }
-.blotter-grid td input[type="text"] { border: none; background: none; outline: none; width: 85px; vertical-align: 2px;}
+.blotter-grid td input[type="text"] {border: none;background: none;outline: none;width: 100px;vertical-align: 2px;}
 .ui-datepicker-calendar{padding:0;font-size:12px}
 a.ui-datepicker-next.ui-corner-all{position:absolute;right:10px}
 a.ui-datepicker-prev.ui-corner-all{position:absolute}
@@ -16,6 +16,7 @@ a.ui-datepicker-prev.ui-corner-all{position:absolute}
 .ui-datepicker-title{text-align:center;font-weight:700}
 .ui-datepicker-header.ui-widget-header{padding:10px;border:1px solid #ccc;border-bottom:none;background:#fff}
 .ui-datepicker-calendar td{padding: 6px 8px;text-align:center;}
+.ui-datepicker-calendar td.ui-datepicker-current-day{background:#ddd;}
 .ui-datepicker-calendar td a{color:inherit;text-decoration:none}
 .ui-datepicker-calendar td:not(.ui-datepicker-titleui-datepicker-unselectable):hover{background:#c7c7c7;cursor:pointer}
 a.ui-datepicker-next:hover, a.ui-datepicker-prev:hover{cursor:pointer;color:#aaa}
