@@ -75,13 +75,19 @@ var Cell = function (grid, index) {
      * @returns {string}
      */
     this.getFormattedValue = function () {
-        var format_type = this.format.split("{");
-        if (format_type[0] == "$price") {
-            currencyCellIndex = (Math.floor(this.index/this.grid.width) * this.grid.width) + this.grid.columns[format_type[1].split("}")[0]];
-            return Currency.formatNumber(this.getValue(), this.grid.cells[currencyCellIndex].getValue());
-        }
-        else if (this.format == "$txt") {
-            return this.getValue();
+        format_type = this.format.split("{");
+        switch (format_type[0]) {
+            case "$price":
+                thisRow = Math.floor(this.index/this.grid.width);
+                currencyCol = this.grid.columns[format_type[1].split("}")[0]];
+                currencyCellIndex = (thisRow * this.grid.width) + currencyCol;
+                return Currency.formatNumber(this.getValue(), this.grid.cells[currencyCellIndex].getValue());
+            case "$num":
+                return this.getValue().toFixed(format_type[1].split("}")[0]);
+            case "$date":
+                return '<input type="text" class="abjsdatepicker" value="' + this.getValue() + '" />';
+            default:
+                return this.getValue();
         }
     }
 

@@ -58,6 +58,7 @@ $.fn.AdaptableGrid = function (options) {
             }
             else {
                 // Regular cell
+                this.cells[i].setId(i);
                 this.cells[i].setValue(options.data[row-1][options.columns[col].field]);
                 this.cells[i].setFormat(options.columns[col].format);
             }
@@ -94,7 +95,7 @@ $.fn.AdaptableGrid = function (options) {
                     table += '<thead>';
                 }
 
-                table += '<th class="adaptablegrid adaptablegrid-header" blotter="' + this.cells[i].getId() +'">'
+                table += '<th class="adaptablegrid adaptablegrid-header" blotter="abjs' + this.cells[i].getId() +'">'
                             + this.cells[i].getFormattedValue() + '</th>';
 
                 if (i == this.width-1) {
@@ -111,7 +112,7 @@ $.fn.AdaptableGrid = function (options) {
                     table += '<tr>';
                 }
 
-                table += '<td>' + this.cells[i].getFormattedValue() + '</td>';
+                table += '<td blotter="abjs' + this.cells[i].getId() +'">' + this.cells[i].getFormattedValue() + '</td>';
 
                 if (col == this.width-1) {
                     table += '</tr>';
@@ -129,7 +130,7 @@ $.fn.AdaptableGrid = function (options) {
 
         console.timeEnd('render');
         console.time('html');
-        $(this)[0].innerHTML = table;
+        $(this).html(table);
         console.timeEnd('html');
         this.applyStyles();
 
@@ -137,31 +138,23 @@ $.fn.AdaptableGrid = function (options) {
 
     /**
      * AdaptableGrid.applyStyles
-     * Adds the styles given in the options property and assigns appropriate classnames
-     * to elements on the grid
+     * Adds any styles necessary to cells
      * @returns {null}
      */
     this.applyStyles = function () {
         console.time('styles');
-        for (i=0; i<options.columns.length; i++) {
-            if (options.columns[i].style) {
-                for (prop in options.columns[i].style) {
-                    this.findElement("th", options.columns[i].field).css(prop, options.columns[i].style[prop]);
-                }
-            }
-        }
+        $(this).find('.abjsdatepicker').datepicker();
         console.timeEnd('styles');
     }
 
     /**
      * AdaptableGrid.findElement
      * Finds the HTML tag within the grid and returns the jQuery elements
-     * @param {string} tag - The tag name to reference the elements
      * @param {string} field - The Blotter reference to the cell
      * @returns {jQuery}
      */
-    this.findElement = function (tag, field) {
-        return $(this).find(tag).filter('[blotter="' + field + '"]');
+    this.findElement = function (field) {
+        return $(this).find('[blotter="abjs' + field + '"]');
     }
 
     return this.__constructor(options);

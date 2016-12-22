@@ -4,6 +4,7 @@ grid { position:relative; width:100%; }
 table { padding: 20px;border-spacing: 0;border-collapse: separate; width: 100%;}
 thead th {white-space: nowrap;padding: 10px;border-bottom: 1px solid #111;font-weight: bold;text-align: left;}
 tr { background-color: #fff; }
-tr:nth-of-type(2n-1) { background-color: #f9f9f9; }
-tr:hover { background-color: #f6f6f6; }
+tr:nth-of-type(2n-1) {background-color: #f1f1f1;}
+thead tr { background-color: #f6f6f6 !important; }
+tr:hover { background-color: #eee; }
 td { border-top: none; white-space: nowrap; padding: 8px 10px; }

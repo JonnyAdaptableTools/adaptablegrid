@@ -10,7 +10,7 @@ var DataGenerator = {
         return [
             { field: "code", title: "Code", format: "$txt" },
             { field: "fullname", title: "Fullname", format: "$txt" },
-            { field: "county", title: "County", format: "$txt" },
+            { field: "country", title: "Country", format: "$txt" },
             { field: "currency", title: "Currency", format: "$txt" },
             { field: "valuation", title: "Valuation", format: "$num{3}" },
             { field: "price", title: "Price", format: "$price{currency}" },
@@ -27,7 +27,7 @@ var DataGenerator = {
      */
     generate: function (numberOfRows) {
        
-        var arrCounties = ["Kent", "Sussex", "Devon"];
+        var arrCountries = ["UK", "USA", "Australia", "Israel", "Canada", "Italy", "Spain"];
         var arrCurrencies = ["USD", "GBP", "EUR", "ILS", "AUD", "CAD"];
         
         // define the return data
@@ -41,7 +41,7 @@ var DataGenerator = {
             row["no_of_children"] = this.getRndNumber(0, 10);
             row["currency"] = arrCurrencies[this.getRndNumber(0, arrCurrencies.length)];
             row["price"] = (Math.random() * this.getRndNumber(0, 1000));
-            row["county"] = arrCounties[this.getRndNumber(0, arrCounties.length)];
+            row["country"] = arrCountries[this.getRndNumber(0, arrCountries.length)];
             row["valuation"] = Math.random() * this.getRndNumber(0, 50) * (i+1);
             row["created"] = this.randomDate(new Date(2000, 1, 1), new Date());
             row["superwealthy"] = (this.getRndNumber(1, 3) == 1 ? "Y" : "N");
@@ -55,14 +55,25 @@ var DataGenerator = {
 
     /**
      * DataGenerator.randomDate
-     * Returns a date between the two given time intervals
+     * Returns a formatted date between the two given time intervals
      * @static
      * @param {date} start - From the start date
      * @param {date} end - Until the end date
-     * @returns {date}
+     * @returns {string}
      */
     randomDate: function (start, end) {
-        return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+        d = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+        var dd = d.getDate();
+        var mm = d.getMonth()+1;
+
+        var yyyy = d.getFullYear();
+        if (dd<10){
+            dd='0'+dd;
+        } 
+        if (mm<10){
+            mm='0'+mm;
+        } 
+        return dd+'/'+mm+'/'+yyyy;
     },
 
     /**

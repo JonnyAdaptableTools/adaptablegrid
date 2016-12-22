@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Adaptable BlotterJS HTML5 Grid</title>
+    <head>
+        <title>Adaptable BlotterJS HTML5 Grid</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
         <link rel="stylesheet" href="grid.css" />
-		<script type="text/javascript" src="utils/jquery.js"></script>
+        <script type="text/javascript" src="utils/jquery.js"></script>
+        <script type="text/javascript" src="utils/jquery-ui.min.js"></script>
         <script type="text/javascript" src="utils/Cell.js"></script>
         <script type="text/javascript" src="utils/Currency.js"></script>
         <script type="text/javascript" src="utils/DataGenerator.js"></script>
-		<script type="text/javascript" src="AdaptableGrid.js"></script>
-	</head>
-	<body>
+        <script type="text/javascript" src="AdaptableGrid.js"></script>
+    </head>
+    <body>
         <grid></grid>
-		<script type="text/javascript">
+        <script type="text/javascript">
         console.time('init');
-		var g = $('grid').AdaptableGrid({
+        var g = $('grid').AdaptableGrid({
             columns: DataGenerator.columns(),
             data: DataGenerator.generate(10000)
-		});
+        });
         g.render(10);
         console.timeEnd('init');
-		</script>
-	</body>
+        </script>
+    </body>
 </html>
