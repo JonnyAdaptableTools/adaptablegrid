@@ -1,4 +1,4 @@
-var Cell = function (grid, index) {
+var Cell = function (row, col) {
 
     /**
      * Cell.__constructor
@@ -7,28 +7,9 @@ var Cell = function (grid, index) {
      * @param {integer} index - The index of the cell
      * @returns {Cell}
      */
-    this.__constructor = function (grid, index) {
-        this.grid = grid;
-        this.index = index;
-    }
-
-    /**
-     * Cell.setId
-     * Sets the identifier of the current cell
-     * @param {any} id - The identifier for this cell
-     * @returns {null}
-     */
-    this.setId = function (id) {
-        this.id = id;
-    }
-
-    /**
-     * Cell.getId
-     * Get the identifier of the current cell
-     * @returns {any}
-     */
-    this.getId = function () {
-        return this.id;
+    this.__constructor = function (row, col) {
+        this.row = row;
+        this.col = col;
     }
 
     /**
@@ -72,28 +53,27 @@ var Cell = function (grid, index) {
     /**
      * Cell.getFormattedValue
      * Displays the value into the correct displayed form, using the given format
+     * @param {AdaptableGrid} grid - A reference to the containing grid
      * @returns {string}
      */
-    this.getFormattedValue = function () {
+    this.getFormattedValue = function (grid) {
         format_type = this.format.split("{");
         switch (format_type[0]) {
             case "$price":
-                thisRow = Math.floor(this.index/this.grid.width);
-                currencyCol = this.grid.columns[format_type[1].split("}")[0]];
-                currencyCellIndex = (thisRow * this.grid.width) + currencyCol;
-                return Currency.formatNumber(this.getValue(), this.grid.cells[currencyCellIndex].getValue());
+                currencyCol = grid.columns.indexOf(format_type[1].split("}")[0]);
+                return Currency.formatNumber(this.getValue(), grid.cells[this.row][currencyCol].getValue());
             case "$num":
                 return this.getValue().toFixed(format_type[1].split("}")[0]);
             case "$date":
-                return '<input type="text" class="abjsdatepicker" blotter-format="'+format_type[1].split("}")[0]+'"' +
+                return '<input type="text" class="adaptablegrid-datepicker" blotter-format="'+format_type[1].split("}")[0]+'"' +
                         'readonly="readonly" value="' + this.getValue() + '" />';
             case "$bool":
-                return '<input type="checkbox" class="abjscheckbox" '+(this.getValue() ? 'checked="checked"' : '')+' />';
+                return '<input type="checkbox" class="adaptablegrid-checkbox" '+(this.getValue() ? 'checked="checked"' : '')+' />';
             default:
                 return this.getValue();
         }
     }
 
-    return this.__constructor(grid, index);
+    return this.__constructor(row, col);
 
 }
