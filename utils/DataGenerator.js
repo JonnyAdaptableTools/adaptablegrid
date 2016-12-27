@@ -8,7 +8,7 @@ var DataGenerator = {
      */
     columns: function () {
         return [
-            { field: "code", title: "Code", format: "$txt" },
+            { field: "id", title: "Transaction", format: "$num{0}" },
             { field: "country", title: "Country", format: "$txt" },
             { field: "currency", title: "Currency", format: "$txt" },
             { field: "valuation", title: "Valuation", format: "$num{3}" },
@@ -35,7 +35,7 @@ var DataGenerator = {
         for (var i = 0; i < numberOfRows; i++) {
             var row = {};
             rndNo = this.getRndNumber(0, arrCurrencies.length);
-            row["code"] = "Code" + i;
+            row["id"] = i;
             row["currency"] = arrCurrencies[rndNo];
             row["price"] = (Math.random() * this.getRndNumber(0, 1000));
             row["country"] = arrCountries[rndNo];

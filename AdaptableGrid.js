@@ -9,8 +9,6 @@ $.fn.AdaptableGrid = function (options) {
      */
     this.__constructor = function (options) {
         
-        console.info("Logging load times...");
-
         // Initialise the options property with some defaults
         this.options = $.extend({
             columns: [],
@@ -40,7 +38,7 @@ $.fn.AdaptableGrid = function (options) {
      */
     this.read = function () {
         
-        console.time("AdaptableGrid.read");
+        debug.start("AdaptableGrid.read");
         this.cells = [];
         this.columns = [];
         
@@ -72,7 +70,7 @@ $.fn.AdaptableGrid = function (options) {
 
         }
 
-        console.timeEnd("AdaptableGrid.read");
+        debug.end("AdaptableGrid.read");
 
     }
 
@@ -85,7 +83,7 @@ $.fn.AdaptableGrid = function (options) {
      */
     this.render = function (num, callback) {
         
-        console.time("AdaptableGrid.render");
+        debug.start("AdaptableGrid.render");
         if (num == null) {
             if (options.display == null) {
                 num = this.height - 1;
@@ -145,11 +143,11 @@ $.fn.AdaptableGrid = function (options) {
 
         table += '</table>';
 
-        console.timeEnd("AdaptableGrid.render");
+        debug.end("AdaptableGrid.render");
         
-        console.time("AdaptableGrid.html");
+        debug.start("AdaptableGrid.html");
         $(this).html(table);
-        console.timeEnd("AdaptableGrid.html");
+        debug.end("AdaptableGrid.html");
         
         this.applyStyles();
         this.editEvents();
@@ -196,7 +194,7 @@ $.fn.AdaptableGrid = function (options) {
             else {
                 c = 'adaptablegrid-sort-asc';
             }
-            gridRef.sort(gridRef.columns[columnIndex], (c == 'adaptablegrid-sort-asc'), function () {
+            Sort.do(gridRef, gridRef.columns[columnIndex], (c == 'adaptablegrid-sort-asc'), function () {
                 gridRef.findElement("0:" + columnIndex).addClass('adaptablegrid-sort').addClass(c);
             });
         });
@@ -228,77 +226,18 @@ $.fn.AdaptableGrid = function (options) {
     }
 
     /**
-     * AdaptableGrid.sort
-     * Sorts the grid and re-renders
-     * @param {string} column - The column reference to order by
-     * @param {bool} asc - Set to true if column is ordered ascending
-     * @param {function} [callback] - The function to run after sorting is finished
-     * @returns {void}
-     */
-    this.sort = function (column, asc, callback) {
-
-        var columnIndex = this.columns.indexOf(column);
-
-        // Find the format of this column
-        columnFormat = this.options.columns[columnIndex].format;
-
-        if (columnFormat == "$txt") {        
-            this.getColumnIndexes(columnIndex);
-            this.columnToIndexes(columnIndex);
-            this.performSort(columnIndex, asc);
-            this.indexesToColumn(columnIndex);
-        }
-        else {
-            this.performSort(columnIndex, asc);
-        }
-
-        this.configureRowCol();
-        this.render(null, callback);
-
-    }
-
-    /**
-     * AdaptableGrid.performSort
-     * Sorts the cells in the grid
-     * Always make sure the header rows stay at the top
-     * @param {integer} columnIndex - The column index used for sorting
-     * @param {bool} asc - Set to true if column is ordered ascending
-     * @returns {void}
-     */
-    this.performSort = function (columnIndex, asc) {
-        
-        console.time("AdaptableGrid.performSort");
-
-        this.cells.sort(function (a, b) {
-            if (a[columnIndex].row == 0) { return -1; }
-            if (b[columnIndex].row == 0) { return 1; }
-            value_a = a[columnIndex].getValue();
-            value_b = b[columnIndex].getValue();
-            if (asc) {
-                return value_a - value_b;
-            }
-            else {
-                return value_b - value_a;
-            }
-        });
-        
-        console.timeEnd("AdaptableGrid.performSort");
-
-    }
-
-    /**
      * AdaptableGrid.columnToIndexes
      * Convert all the cells in a particular column to a number
      * @param {integer} ind - The column index
      * @returns {void}
      */
     this.columnToIndexes = function (ind) {
-        console.time("AdaptableGrid.columnToIndexes");
+        debug.start("AdaptableGrid.columnToIndexes");
         for (i=1; i<this.cells.length; i++) {
             indexOfValue = this.columnValueToIndex[ind][this.cells[i][ind].getValue()];
             this.cells[i][ind].setValue(indexOfValue);
         }
-        console.timeEnd("AdaptableGrid.columnToIndexes");
+        debug.end("AdaptableGrid.columnToIndexes");
     }
 
     /**
@@ -308,11 +247,11 @@ $.fn.AdaptableGrid = function (options) {
      * @returns {void}
      */
     this.indexesToColumn = function (ind) {
-        console.time("AdaptableGrid.indexesToColumn");
+        debug.start("AdaptableGrid.indexesToColumn");
         for (i=1; i<this.cells.length; i++) {
             this.cells[i][ind].setValue(this.columnIndexToValue[ind][this.cells[i][ind].getValue()]);
         }
-        console.timeEnd("AdaptableGrid.indexesToColumn");
+        debug.end("AdaptableGrid.indexesToColumn");
     }
 
     /**
@@ -323,7 +262,7 @@ $.fn.AdaptableGrid = function (options) {
      */
     this.getColumnIndexes = function (ind) {
         
-        console.time("AdaptableGrid.getColumnIndexes");
+        debug.start("AdaptableGrid.getColumnIndexes");
         
         if (this.columnIndexToValue[ind] == null) {
 
@@ -346,7 +285,7 @@ $.fn.AdaptableGrid = function (options) {
 
         }
 
-        console.timeEnd("AdaptableGrid.getColumnIndexes");
+        debug.end("AdaptableGrid.getColumnIndexes");
 
     }
 
@@ -358,14 +297,14 @@ $.fn.AdaptableGrid = function (options) {
      * @returns {void}
      */
     this.configureRowCol = function () {
-        console.time("AdaptableGrid.configureRowCol");
+        debug.start("AdaptableGrid.configureRowCol");
         for (i=0; i<this.height; i++) {
             for (j=0; j<this.width; j++) {
                 this.cells[i][j].row = i;
                 this.cells[i][j].col = j;
             }
         }
-        console.timeEnd("AdaptableGrid.configureRowCol");
+        debug.end("AdaptableGrid.configureRowCol");
     }
 
     return this.__constructor(options);
