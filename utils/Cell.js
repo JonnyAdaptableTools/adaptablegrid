@@ -16,7 +16,7 @@ var Cell = function (row, col) {
      * Cell.setValue
      * Sets the value of the current cell
      * @param {any} v - Any type can be in the cell
-     * @returns {null}
+     * @returns {void}
      */
     this.setValue = function (v) {
         this.val = v;
@@ -35,7 +35,7 @@ var Cell = function (row, col) {
      * Cell.setFormat
      * Sets the format of the current cell
      * @param {string} format - The format, out of: $txt, $num, $price, $date
-     * @returns {null}
+     * @returns {void}
      */
     this.setFormat = function (f) {
         this.format = f;

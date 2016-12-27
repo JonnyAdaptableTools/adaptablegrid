@@ -25,6 +25,9 @@ $.fn.AdaptableGrid = function (options) {
             display: null
         }, options);
 
+        this.columnValueToIndex = {};
+        this.columnIndexToValue = {};
+
         this.read();
         return this;
         
@@ -33,7 +36,7 @@ $.fn.AdaptableGrid = function (options) {
     /**
      * AdaptableGrid.read
      * Reads in the data to create a singleton list of type Cell
-     * @returns {null}
+     * @returns {void}
      */
     this.read = function () {
         
@@ -78,7 +81,7 @@ $.fn.AdaptableGrid = function (options) {
      * Prints out the grid to the DOM
      * @param {integer} [num] - The number of rows to display
      * @param {function} [callback] - The function to run after rendering is finished
-     * @returns {null}
+     * @returns {void}
      */
     this.render = function (num, callback) {
         
@@ -178,7 +181,7 @@ $.fn.AdaptableGrid = function (options) {
     /**
      * AdaptableGrid.editEvents
      * When changing any DOM elements, update the cells property
-     * @returns {null}
+     * @returns {void}
      */
     this.editEvents = function () {
         
@@ -230,25 +233,120 @@ $.fn.AdaptableGrid = function (options) {
      * @param {string} column - The column reference to order by
      * @param {bool} asc - Set to true if column is ordered ascending
      * @param {function} [callback] - The function to run after sorting is finished
-     * @returns {null}
+     * @returns {void}
      */
     this.sort = function (column, asc, callback) {
-       
-        console.time("AdaptableGrid.sort");
-        
-        var columnIndex = this.columns.indexOf(column);
-        
-        this.cells.sort(function (a, b) {
-            if (asc) { order = 1; }
-            else { order = -1; }
-            if (a[columnIndex].row == 0) { return -1; }
-            if (b[columnIndex].row == 0) { return 1; }
-            return (a[columnIndex].getValue() > b[columnIndex].getValue()) ? order : -order;
-        });
 
-        console.timeEnd("AdaptableGrid.sort");
+        var columnIndex = this.columns.indexOf(column);
+
+        // Find the format of this column
+        columnFormat = this.options.columns[columnIndex].format;
+
+        if (columnFormat == "$txt") {        
+            this.getColumnIndexes(columnIndex);
+            this.columnToIndexes(columnIndex);
+            this.performSort(columnIndex, asc);
+            this.indexesToColumn(columnIndex);
+        }
+        else {
+            this.performSort(columnIndex, asc);
+        }
+
         this.configureRowCol();
         this.render(null, callback);
+
+    }
+
+    /**
+     * AdaptableGrid.performSort
+     * Sorts the cells in the grid
+     * Always make sure the header rows stay at the top
+     * @param {integer} columnIndex - The column index used for sorting
+     * @param {bool} asc - Set to true if column is ordered ascending
+     * @returns {void}
+     */
+    this.performSort = function (columnIndex, asc) {
+        
+        console.time("AdaptableGrid.performSort");
+
+        this.cells.sort(function (a, b) {
+            if (a[columnIndex].row == 0) { return -1; }
+            if (b[columnIndex].row == 0) { return 1; }
+            value_a = a[columnIndex].getValue();
+            value_b = b[columnIndex].getValue();
+            if (asc) {
+                return value_a - value_b;
+            }
+            else {
+                return value_b - value_a;
+            }
+        });
+        
+        console.timeEnd("AdaptableGrid.performSort");
+
+    }
+
+    /**
+     * AdaptableGrid.columnToIndexes
+     * Convert all the cells in a particular column to a number
+     * @param {integer} ind - The column index
+     * @returns {void}
+     */
+    this.columnToIndexes = function (ind) {
+        console.time("AdaptableGrid.columnToIndexes");
+        for (i=1; i<this.cells.length; i++) {
+            indexOfValue = this.columnValueToIndex[ind][this.cells[i][ind].getValue()];
+            this.cells[i][ind].setValue(indexOfValue);
+        }
+        console.timeEnd("AdaptableGrid.columnToIndexes");
+    }
+
+    /**
+     * AdaptableGrid.indexesToColumn
+     * Convert all the cells in a particular column from a number back to their original value
+     * @param {integer} ind - The column index
+     * @returns {void}
+     */
+    this.indexesToColumn = function (ind) {
+        console.time("AdaptableGrid.indexesToColumn");
+        for (i=1; i<this.cells.length; i++) {
+            this.cells[i][ind].setValue(this.columnIndexToValue[ind][this.cells[i][ind].getValue()]);
+        }
+        console.timeEnd("AdaptableGrid.indexesToColumn");
+    }
+
+    /**
+     * AdaptableGrid.columnToIndexes
+     * Generate two maps to turn text to an index and index back to text
+     * @param {integer} columnIndex - The column index used for sorting
+     * @returns {void}
+     */
+    this.getColumnIndexes = function (ind) {
+        
+        console.time("AdaptableGrid.getColumnIndexes");
+        
+        if (this.columnIndexToValue[ind] == null) {
+
+            this.columnIndexToValue[ind] = $.unique($.map(this.cells, function (i, n) {
+                if (n > 0) {
+                    return i[ind].getValue();
+                }
+            }));
+
+            this.columnIndexToValue[ind].sort();
+
+            var key;
+            var tmpArr = {};
+
+            for (i=0; i<this.columnIndexToValue[ind].length; i++) {
+                tmpArr[this.columnIndexToValue[ind][i]] = i;
+            }
+
+            this.columnValueToIndex[ind] = tmpArr;
+
+        }
+
+        console.timeEnd("AdaptableGrid.getColumnIndexes");
 
     }
 
@@ -257,7 +355,7 @@ $.fn.AdaptableGrid = function (options) {
      * After the cell
      * @param {string} column - The column reference to order by
      * @param {bool} asc - Set to true if column is ordered ascending
-     * @returns {null}
+     * @returns {void}
      */
     this.configureRowCol = function () {
         console.time("AdaptableGrid.configureRowCol");
