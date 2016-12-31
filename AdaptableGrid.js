@@ -13,19 +13,36 @@ $.fn.AdaptableGrid = function (options) {
         this.options = $.extend({
             columns: [],
             data: [],
-            sort: null,
+            display: null,
+            sort: false,
+            pages: false,
             filter: null,
             edit: null,
             ordering: null,
-            pages: null,
             search: null,
-            styles: null,
-            display: null
+            styles: null
         }, options);
 
         this.columnValueToIndex = {};
         this.columnIndexToValue = {};
 
+        this.cells = [];
+        this.columns = [];
+        
+        this.width = options.columns.length;
+        this.height = options.data.length + 1;
+        dimension = this.width * this.height;
+
+        if (options.display == null) {
+            num = this.height - 1;
+        }
+        else {
+            num = options.display;
+        }
+
+        this.displayHeight = num + 1;
+
+        this.resetPages();
         this.read();
         return this;
         
@@ -39,13 +56,7 @@ $.fn.AdaptableGrid = function (options) {
     this.read = function () {
         
         debug.start("AdaptableGrid.read");
-        this.cells = [];
-        this.columns = [];
-        
-        this.width = options.columns.length;
-        this.height = options.data.length + 1;
-        dimension = this.width * this.height;
-        
+            
         for (i=0; i<this.height; i++) {
 
             this.cells[i] = [];
@@ -77,30 +88,21 @@ $.fn.AdaptableGrid = function (options) {
     /**
      * AdaptableGrid.render
      * Prints out the grid to the DOM
-     * @param {integer} [num] - The number of rows to display
      * @param {function} [callback] - The function to run after rendering is finished
      * @returns {void}
      */
-    this.render = function (num, callback) {
+    this.render = function (callback) {
         
         debug.start("AdaptableGrid.render");
-        if (num == null) {
-            if (options.display == null) {
-                num = this.height - 1;
-            }
-            else {
-                num = options.display;
-            }
-        }
-
-        this.displayHeight = num + 1;
 
         var table = '<table>';
 
         // Output all the cells
         for (i=0; i<this.displayHeight; i++) {
 
-            if (i == 0) {
+            var row = i;
+
+            if (row == 0) {
 
                 for (j=0; j<this.width; j++) {
 
@@ -108,8 +110,8 @@ $.fn.AdaptableGrid = function (options) {
                         table += '<thead>';
                     }
 
-                    table += '<th class="adaptablegrid adaptablegrid-header" blotter="abjs:' + i + ":" + j +'">'
-                                + this.cells[i][j].getFormattedValue(this) + '</th>';
+                    table += '<th class="adaptablegrid adaptablegrid-header" blotter="abjs:' + row + ":" + j +'">'
+                                + this.cells[row][j].getFormattedValue(this) + '</th>';
 
                     if (j == this.width-1) {
                         table += '</thead><tbody>';
@@ -120,13 +122,18 @@ $.fn.AdaptableGrid = function (options) {
             }
             else {
 
+                // If dealing with pages, after printing the headers, jump to the relavant row
+                if (this.options.pages) {
+                    row = (this.currentPage - 1) * (this.displayHeight - 1) + i;
+                }
+
                 for (j=0; j<this.width; j++) {
 
                     if (j == 0) {
                         table += '<tr>';
                     }
 
-                    table += '<td blotter="abjs:' + i + ":" + j +'">' + this.cells[i][j].getFormattedValue(this) + '</td>';
+                    table += '<td blotter="abjs:' + row + ":" + j +'">' + this.cells[row][j].getFormattedValue(this) + '</td>';
 
                     if (j == this.width-1) {
                         table += '</tr>';
@@ -149,6 +156,7 @@ $.fn.AdaptableGrid = function (options) {
         $(this).html(table);
         debug.end("AdaptableGrid.html");
         
+        this.addPages();
         this.applyStyles();
         this.editEvents();
 
@@ -156,6 +164,30 @@ $.fn.AdaptableGrid = function (options) {
             callback();
         }
 
+    }
+
+    /**
+     * AdaptableGrid.resetPages
+     * Initialises the number of pages and sets the current page to 1
+     * Note: pages range from 1 - this.numberOfPages (inclusive), no zero-indexes for pages
+     * @returns {null}
+     */
+    this.resetPages = function () {
+        if (this.options.pages) {
+            this.currentPage = 1;
+            this.numberOfPages = Math.ceil((this.height - 1) / (this.displayHeight - 1));
+        }
+    }
+
+    /**
+     * AdaptableGrid.addPages
+     * Adds the HTML div which contains what page we are currently on
+     * @returns {null}
+     */
+    this.addPages = function () {
+        if (this.options.pages) {
+            $(this).append('<div class="adaptablegrid-pages noselect">Page <b class="adaptablegrid-currentpage">'+this.currentPage+'</b> of '+this.numberOfPages+'<div class="adaptablegrid-page-prev '+(this.currentPage==1?'adaptablegrid-page-disabled':'')+'"></div><div class="adaptablegrid-page-next '+(this.currentPage==this.numberOfPages?'adaptablegrid-page-disabled':'')+'"></div></div>');
+        }
     }
 
     /**
@@ -182,47 +214,66 @@ $.fn.AdaptableGrid = function (options) {
      * @returns {void}
      */
     this.editEvents = function () {
-        
-        gridRef = this;
-        
+                
         // Sorting events
-        $(this).find('.adaptablegrid-header').on('click', function () {
-            columnIndex = $(this).attr('blotter').split("abjs:0:")[1];
-            if ($(this).hasClass('adaptablegrid-sort-asc')) {
-                c = 'adaptablegrid-sort-des';
-            }
-            else {
-                c = 'adaptablegrid-sort-asc';
-            }
-            Sort.do(gridRef, gridRef.columns[columnIndex], (c == 'adaptablegrid-sort-asc'), function () {
-                gridRef.findElement("0:" + columnIndex).addClass('adaptablegrid-sort').addClass(c);
-            });
-        });
+        if (this.options.sort) {
+            $(this).find('.adaptablegrid-header').addClass('adaptablegrid-sortable');
+            $(this).find('.adaptablegrid-header').on('click', function (header) {
+                columnIndex = $(header.target).attr('blotter').split("abjs:0:")[1];
+                if ($(header.target).hasClass('adaptablegrid-sort-asc')) {
+                    c = 'adaptablegrid-sort-des';
+                }
+                else {
+                    c = 'adaptablegrid-sort-asc';
+                }
+                var s = new Sort(this, [{ column: this.columns[columnIndex], order: (c == 'adaptablegrid-sort-asc') }]);
+                s.process(function () {
+                    this.findElement(0, columnIndex).addClass('adaptablegrid-sort').addClass(c);
+                }.bind(this));
+            }.bind(this));
+        }
 
         // Datepicker events
-        $(this).find('.adaptablegrid-datepicker').on('change', function () {
-            thisCell = $(this).parents('td[blotter]').attr('blotter').split("abjs:")[1].split(":");
-            newValue = $(this).val();
-            gridRef.cells[thisCell[0]][thisCell[1]].setValue(newValue);
-        });
+        $(this).find('.adaptablegrid-datepicker').on('change', function (datepicker) {
+            thisCell = $(datepicker.target).parents('td[blotter]').attr('blotter').split("abjs:")[1].split(":");
+            newValue = $(datepicker.target).val();
+            this.cells[thisCell[0]][thisCell[1]].setValue(newValue);
+        }.bind(this));
         
         // Boolean events
-        $(this).find('.adaptablegrid-checkbox').on('change', function () {
-            thisCell = $(this).parents('td[blotter]').attr('blotter').split("abjs:")[1].split(":");
-            newValue = $(this).is(':checked') ? 1 : 0;
-            gridRef.cells[thisCell[0]][thisCell[1]].setValue(newValue);
-        });
+        $(this).find('.adaptablegrid-checkbox').on('change', function (checkbox) {
+            thisCell = $(checkbox.target).parents('td[blotter]').attr('blotter').split("abjs:")[1].split(":");
+            newValue = $(checkbox.target).is(':checked') ? 1 : 0;
+            this.cells[thisCell[0]][thisCell[1]].setValue(newValue);
+        }.bind(this));
+
+        // Paging events
+        if (this.options.pages) {
+            $(this).find('.adaptablegrid-page-prev').click(function () {
+                if (this.currentPage > 1) {
+                    this.currentPage -= 1;
+                    this.render();
+                }
+            }.bind(this));
+            $(this).find('.adaptablegrid-page-next').click(function () {
+                if (this.currentPage < this.numberOfPages) {
+                    this.currentPage += 1;
+                    this.render();
+                }
+            }.bind(this));
+        }
 
     }
 
     /**
      * AdaptableGrid.findElement
      * Finds the HTML tag within the grid and returns the jQuery elements
-     * @param {string} field - The Blotter reference to the cell
+     * @param {integer} row - The row of the cell
+     * @param {integer} col - The column of the cell
      * @returns {jQuery}
      */
-    this.findElement = function (ref) {
-        return $(this).find('[blotter="abjs:' + ref + '"]');
+    this.findElement = function (row, col) {
+        return $(this).find('[blotter="abjs:' + row + ":" + col + '"]');
     }
 
     /**
@@ -233,7 +284,7 @@ $.fn.AdaptableGrid = function (options) {
      */
     this.columnToIndexes = function (ind) {
         debug.start("AdaptableGrid.columnToIndexes");
-        for (i=1; i<this.cells.length; i++) {
+        for (var i=1; i<this.cells.length; i++) {
             indexOfValue = this.columnValueToIndex[ind][this.cells[i][ind].getValue()];
             this.cells[i][ind].setValue(indexOfValue);
         }
@@ -248,7 +299,7 @@ $.fn.AdaptableGrid = function (options) {
      */
     this.indexesToColumn = function (ind) {
         debug.start("AdaptableGrid.indexesToColumn");
-        for (i=1; i<this.cells.length; i++) {
+        for (var i=1; i<this.cells.length; i++) {
             this.cells[i][ind].setValue(this.columnIndexToValue[ind][this.cells[i][ind].getValue()]);
         }
         debug.end("AdaptableGrid.indexesToColumn");
@@ -277,7 +328,7 @@ $.fn.AdaptableGrid = function (options) {
             var key;
             var tmpArr = {};
 
-            for (i=0; i<this.columnIndexToValue[ind].length; i++) {
+            for (var i=0; i<this.columnIndexToValue[ind].length; i++) {
                 tmpArr[this.columnIndexToValue[ind][i]] = i;
             }
 

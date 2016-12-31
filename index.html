@@ -20,7 +20,9 @@
         var g = $('grid').AdaptableGrid({
             columns: DataGenerator.columns(),
             data: DataGenerator.generate(10000),
-            display: 100
+            display: 10,
+            sort: true,
+            pages: true
         });
         g.render();
         </script>
