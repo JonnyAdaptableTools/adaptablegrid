@@ -1,67 +1,122 @@
-var Sort = {
+var Sort = function (grid, data) {
 
     /**
-     * Sort.do
-     * Sorts the grid and re-renders
+     * Sort.__construct
+     * Configures the sort
      * @param {object} grid - The grid to sort
-     * @param {string} column - The column reference to order by
-     * @param {bool} asc - Set to true if column is ordered ascending
+     * @param {object[]} data - The sort data to show the priority of columns
+     * @returns {void}
+     * 
+     * @example new Sort(g, [
+     *  { column: "currency", order: ["GBP", "AUD", "CAD", "USD", "EUR"] },
+     *  { column: "id", order: true }
+     * ]);
+     */
+    this.__construct = function (grid, data) {
+        this.grid = grid;
+        this.data = data;
+        return this;
+    }
+
+    /**
+     * Sort.process
+     * Run the sort and re-renders the grid
      * @param {function} [callback] - The function to run after sorting is finished
-     * @returns {void}
      */
-    do: function (grid, column, asc, callback) {
+    this.process = function (callback) {
+        this.prepare();
+        this.shuffle();
+        this.cleanUp();
+        this.grid.configureRowCol();
+        this.grid.resetPages();
+        this.grid.render(callback);
+    }
 
-        debug.start("Sort.do");
-        var columnIndex = grid.columns.indexOf(column);
-
-        // Find the format of this column
-        columnFormat = grid.options.columns[columnIndex].format;
-
-        debug.end("Sort.do");
-
-        if (columnFormat == "$txt") {        
-            grid.getColumnIndexes(columnIndex);
-            grid.columnToIndexes(columnIndex);
-            Sort.ordering(grid, columnIndex, asc);
-            grid.indexesToColumn(columnIndex);
-        }
-        else {
-            Sort.ordering(grid, columnIndex, asc);
-        }
-
-        grid.configureRowCol();
-        grid.render(null, callback);
-
-    },
-
-    /**
-     * Sort.ordering
-     * Use the appropriate algorithm to order the rows
-     * Always make sure the header rows stay at the top
-     * @param {object} grid - The grid to sort
-     * @param {integer} columnIndex - The column index used for sorting
-     * @param {bool} asc - Set to true if column is ordered ascending
-     * @returns {void}
-     */
-    ordering: function (grid, columnIndex, asc) {
+    this.prepare = function () {
         
-        debug.start("Sort.ordering");
-
-        grid.cells.sort(function (a, b) {
-            if (a[columnIndex].row == 0) { return -1; }
-            if (b[columnIndex].row == 0) { return 1; }
-            value_a = a[columnIndex].getValue();
-            value_b = b[columnIndex].getValue();
-            if (asc) {
-                return value_a - value_b;
+        debug.start("Sort.prepare");
+        this.columnIndex = [];
+        this.columnFormat = [];
+        this.columnSortBy = [];
+        for (var i=0; i<data.length; i++) {
+            // Find the index and format of this column
+            this.columnIndex[i] = this.grid.columns.indexOf(data[i].column);
+            this.columnFormat[i] = this.grid.options.columns[this.columnIndex[i]].format;
+            if (this.columnFormat[i] == "$txt") {
+                this.grid.getColumnIndexes(this.columnIndex[i]);
+                this.grid.columnToIndexes(this.columnIndex[i]);
             }
-            else {
-                return value_b - value_a;
+            if (Array.isArray(data[i].order)) {
+                data[i].order = data[i].order.map(function (x) {
+                    return this.grid.columnValueToIndex[this.columnIndex[i]][x];
+                }, this);
             }
-        });
-        
-        debug.end("Sort.ordering");
+            this.columnSortBy[i] = data[i].order;
+        }
+        debug.end("Sort.prepare");
 
     }
+
+    this.cleanUp = function () {
+        debug.start("Sort.cleanUp");
+        for (i=0; i<data.length; i++) {
+            if (this.columnFormat[i] == "$txt") {
+                this.grid.indexesToColumn(this.columnIndex[i]);
+            }
+        }
+        debug.end("Sort.cleanUp");
+    }
+
+    /**
+     * Sort.shuffle
+     * Use the appropriate algorithm to order the rows
+     * Always make sure the header rows stay at the top
+     * @param {integer[]} columnIndex - The column indexes used for sorting
+     *        true for ascending, false for descending or an array of ordered values
+     * @param {any[]} columnSortBy - Ascending/Descending or by specific order
+     * @returns {void}
+     */
+    this.shuffle = function () {
+        
+        debug.start("Sort.shuffle");
+
+        this.grid.cells.sort(function (a, b) {
+            
+            if (a[this.columnIndex[0]].row == 0) { return -1; }
+            if (b[this.columnIndex[0]].row == 0) { return 1; }
+            
+            for (i=0; i<this.columnIndex.length; i++) {
+                
+                if (Array.isArray(this.columnSortBy[i])) {
+                    value_a = this.columnSortBy[i].indexOf(a[this.columnIndex[i]].getValue());
+                    value_b = this.columnSortBy[i].indexOf(b[this.columnIndex[i]].getValue());
+                    if (value_a == -1) { value_a = this.columnSortBy[i].length; }
+                    if (value_b == -1) { value_b = this.columnSortBy[i].length; }
+                    if (value_a != value_b) {
+                        return value_a - value_b;
+                    }
+                }
+                else {
+                    value_a = a[this.columnIndex[i]].getValue();
+                    value_b = b[this.columnIndex[i]].getValue();
+                    if (value_a != value_b) {                
+                        if (this.columnSortBy[i]) {
+                            return value_a - value_b;
+                        }
+                        else {
+                            return value_b - value_a;
+                        }
+                    }
+                }
+
+            }            
+            
+        }.bind(this));
+        
+        debug.end("Sort.shuffle");
+
+    }
+
+    return this.__construct(grid, data);
 
 }
