@@ -1,0 +1,5 @@
+{
+    "name": "AdaptableBlotter HTML5 Grid",
+    "description": "A simple light-weight HTML5 grid with sorting, filtering and column reordering.",
+    "main": "AdaptableBlotter.js"
+}

@@ -14,11 +14,11 @@ $.fn.AdaptableGrid = function (options) {
             columns: [],
             data: [],
             display: null,
-            sort: false,
-            pages: false,
+            sortable: false,
+            pageable: false,
+            reorderable: false,
             filter: null,
             edit: null,
-            ordering: null,
             search: null,
             styles: null
         }, options);
@@ -42,7 +42,10 @@ $.fn.AdaptableGrid = function (options) {
 
         this.displayHeight = num + 1;
 
-        this.resetPages();
+        if (this.options.pageable) {
+            PageUtil.resetPages.bind(this)();
+        }
+
         this.read();
         return this;
         
@@ -123,7 +126,7 @@ $.fn.AdaptableGrid = function (options) {
             else {
 
                 // If dealing with pages, after printing the headers, jump to the relavant row
-                if (this.options.pages) {
+                if (this.options.pageable) {
                     row = (this.currentPage - 1) * (this.displayHeight - 1) + i;
                 }
 
@@ -156,9 +159,23 @@ $.fn.AdaptableGrid = function (options) {
         $(this).html(table);
         debug.end("AdaptableGrid.html");
         
-        this.addPages();
         this.applyStyles();
-        this.editEvents();
+
+        if (this.options.pageable) {
+            PageUtil.addPages.bind(this)();
+            PageUtil.events.bind(this)();
+        }
+
+        if (this.options.sortable) {
+            SortUtil.events.bind(this)();
+        }
+
+        if (this.options.reorderable) {
+            ReorderUtil.events.bind(this)();
+        }
+
+        PersistenceUtil.dates.bind(this)();
+        PersistenceUtil.checkbox.bind(this)();
 
         if (callback) {
             callback();
@@ -167,33 +184,9 @@ $.fn.AdaptableGrid = function (options) {
     }
 
     /**
-     * AdaptableGrid.resetPages
-     * Initialises the number of pages and sets the current page to 1
-     * Note: pages range from 1 - this.numberOfPages (inclusive), no zero-indexes for pages
-     * @returns {null}
-     */
-    this.resetPages = function () {
-        if (this.options.pages) {
-            this.currentPage = 1;
-            this.numberOfPages = Math.ceil((this.height - 1) / (this.displayHeight - 1));
-        }
-    }
-
-    /**
-     * AdaptableGrid.addPages
-     * Adds the HTML div which contains what page we are currently on
-     * @returns {null}
-     */
-    this.addPages = function () {
-        if (this.options.pages) {
-            $(this).append('<div class="adaptablegrid-pages noselect">Page <b class="adaptablegrid-currentpage">'+this.currentPage+'</b> of '+this.numberOfPages+'<div class="adaptablegrid-page-prev '+(this.currentPage==1?'adaptablegrid-page-disabled':'')+'"></div><div class="adaptablegrid-page-next '+(this.currentPage==this.numberOfPages?'adaptablegrid-page-disabled':'')+'"></div></div>');
-        }
-    }
-
-    /**
      * AdaptableGrid.applyStyles
      * Adds any styles necessary to cells
-     * @returns {null}
+     * @returns {void}
      */
     this.applyStyles = function () {
         $(this).addClass('blotter-grid');
@@ -209,63 +202,6 @@ $.fn.AdaptableGrid = function (options) {
     }
 
     /**
-     * AdaptableGrid.editEvents
-     * When changing any DOM elements, update the cells property
-     * @returns {void}
-     */
-    this.editEvents = function () {
-                
-        // Sorting events
-        if (this.options.sort) {
-            $(this).find('.adaptablegrid-header').addClass('adaptablegrid-sortable');
-            $(this).find('.adaptablegrid-header').on('click', function (header) {
-                columnIndex = $(header.target).attr('blotter').split("abjs:0:")[1];
-                if ($(header.target).hasClass('adaptablegrid-sort-asc')) {
-                    c = 'adaptablegrid-sort-des';
-                }
-                else {
-                    c = 'adaptablegrid-sort-asc';
-                }
-                var s = new Sort(this, [{ column: this.columns[columnIndex], order: (c == 'adaptablegrid-sort-asc') }]);
-                s.process(function () {
-                    this.findElement(0, columnIndex).addClass('adaptablegrid-sort').addClass(c);
-                }.bind(this));
-            }.bind(this));
-        }
-
-        // Datepicker events
-        $(this).find('.adaptablegrid-datepicker').on('change', function (datepicker) {
-            thisCell = $(datepicker.target).parents('td[blotter]').attr('blotter').split("abjs:")[1].split(":");
-            newValue = $(datepicker.target).val();
-            this.cells[thisCell[0]][thisCell[1]].setValue(newValue);
-        }.bind(this));
-        
-        // Boolean events
-        $(this).find('.adaptablegrid-checkbox').on('change', function (checkbox) {
-            thisCell = $(checkbox.target).parents('td[blotter]').attr('blotter').split("abjs:")[1].split(":");
-            newValue = $(checkbox.target).is(':checked') ? 1 : 0;
-            this.cells[thisCell[0]][thisCell[1]].setValue(newValue);
-        }.bind(this));
-
-        // Paging events
-        if (this.options.pages) {
-            $(this).find('.adaptablegrid-page-prev').click(function () {
-                if (this.currentPage > 1) {
-                    this.currentPage -= 1;
-                    this.render();
-                }
-            }.bind(this));
-            $(this).find('.adaptablegrid-page-next').click(function () {
-                if (this.currentPage < this.numberOfPages) {
-                    this.currentPage += 1;
-                    this.render();
-                }
-            }.bind(this));
-        }
-
-    }
-
-    /**
      * AdaptableGrid.findElement
      * Finds the HTML tag within the grid and returns the jQuery elements
      * @param {integer} row - The row of the cell
@@ -274,88 +210,6 @@ $.fn.AdaptableGrid = function (options) {
      */
     this.findElement = function (row, col) {
         return $(this).find('[blotter="abjs:' + row + ":" + col + '"]');
-    }
-
-    /**
-     * AdaptableGrid.columnToIndexes
-     * Convert all the cells in a particular column to a number
-     * @param {integer} ind - The column index
-     * @returns {void}
-     */
-    this.columnToIndexes = function (ind) {
-        debug.start("AdaptableGrid.columnToIndexes");
-        for (var i=1; i<this.cells.length; i++) {
-            indexOfValue = this.columnValueToIndex[ind][this.cells[i][ind].getValue()];
-            this.cells[i][ind].setValue(indexOfValue);
-        }
-        debug.end("AdaptableGrid.columnToIndexes");
-    }
-
-    /**
-     * AdaptableGrid.indexesToColumn
-     * Convert all the cells in a particular column from a number back to their original value
-     * @param {integer} ind - The column index
-     * @returns {void}
-     */
-    this.indexesToColumn = function (ind) {
-        debug.start("AdaptableGrid.indexesToColumn");
-        for (var i=1; i<this.cells.length; i++) {
-            this.cells[i][ind].setValue(this.columnIndexToValue[ind][this.cells[i][ind].getValue()]);
-        }
-        debug.end("AdaptableGrid.indexesToColumn");
-    }
-
-    /**
-     * AdaptableGrid.columnToIndexes
-     * Generate two maps to turn text to an index and index back to text
-     * @param {integer} columnIndex - The column index used for sorting
-     * @returns {void}
-     */
-    this.getColumnIndexes = function (ind) {
-        
-        debug.start("AdaptableGrid.getColumnIndexes");
-        
-        if (this.columnIndexToValue[ind] == null) {
-
-            this.columnIndexToValue[ind] = $.unique($.map(this.cells, function (i, n) {
-                if (n > 0) {
-                    return i[ind].getValue();
-                }
-            }));
-
-            this.columnIndexToValue[ind].sort();
-
-            var key;
-            var tmpArr = {};
-
-            for (var i=0; i<this.columnIndexToValue[ind].length; i++) {
-                tmpArr[this.columnIndexToValue[ind][i]] = i;
-            }
-
-            this.columnValueToIndex[ind] = tmpArr;
-
-        }
-
-        debug.end("AdaptableGrid.getColumnIndexes");
-
-    }
-
-    /**
-     * AdaptableGrid.configureRowCol
-     * After the cell
-     * @param {string} column - The column reference to order by
-     * @param {bool} asc - Set to true if column is ordered ascending
-     * @returns {void}
-     */
-    this.configureRowCol = function () {
-        debug.start("AdaptableGrid.configureRowCol");
-        for (i=0; i<this.height; i++) {
-            for (j=0; j<this.width; j++) {
-                this.cells[i][j].row = i;
-                this.cells[i][j].col = j;
-            }
-        }
-        debug.end("AdaptableGrid.configureRowCol");
     }
 
     return this.__constructor(options);

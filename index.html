@@ -3,28 +3,33 @@
     <head>
         <title>Adaptable BlotterJS HTML5 Grid</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
-        <link rel="stylesheet" href="grid.css" />
-        <script type="text/javascript" src="utils/jquery.js"></script>
-        <script type="text/javascript" src="utils/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="utils/Debug.js"></script>
-        <script type="text/javascript" src="utils/Sort.js"></script>
-        <script type="text/javascript" src="utils/Cell.js"></script>
-        <script type="text/javascript" src="utils/Currency.js"></script>
-        <script type="text/javascript" src="utils/DataGenerator.js"></script>
+        <link rel="stylesheet" href="AdaptableGrid.css" />
+        <script type="text/javascript" src="jquery.js"></script>
+        <script type="text/javascript" src="jquery-ui.min.js"></script>
+        <script type="text/javascript" src="lib/Debug.js"></script>
+        <script type="text/javascript" src="lib/Sorter.js"></script>
+        <script type="text/javascript" src="lib/Cell.js"></script>
+        <script type="text/javascript" src="lib/CurrencyUtil.js"></script>
+        <script type="text/javascript" src="lib/SortUtil.js"></script>
+        <script type="text/javascript" src="lib/PageUtil.js"></script>
+        <script type="text/javascript" src="lib/PersistenceUtil.js"></script>
+        <script type="text/javascript" src="lib/ReorderUtil.js"></script>
+        <script type="text/javascript" src="lib/DataGenerator.js"></script>
         <script type="text/javascript" src="AdaptableGrid.js"></script>
     </head>
     <body>
         <grid></grid>
         <script type="text/javascript">
         var debug = new Debug(true);
-        var g = $('grid').AdaptableGrid({
+        var blotter = $('grid').AdaptableGrid({
             columns: DataGenerator.columns(),
             data: DataGenerator.generate(10000),
             display: 10,
-            sort: true,
-            pages: true
+            sortable: true,
+            pageable: true,
+            reorderable: true
         });
-        g.render();
+        blotter.render();
         </script>
     </body>
 </html>
