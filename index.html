@@ -21,15 +21,17 @@
         <grid></grid>
         <script type="text/javascript">
         var debug = new Debug(true);
+        debug.multiple = false;
+
         var blotter = $('grid').AdaptableGrid({
             columns: DataGenerator.columns(),
-            data: DataGenerator.generate(100),
+            data: DataGenerator.generate(10000),
             display: 20,
             sortable: true,
             pageable: true,
             reorderable: true
         });
-        blotter.render();
+        
         </script>
     </body>
 </html>

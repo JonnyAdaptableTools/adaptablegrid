@@ -9,6 +9,8 @@ $.fn.AdaptableGrid = function (options) {
      */
     this.__constructor = function (options) {
         
+        debug.start("AdaptableGrid.__constructor");
+
         // Initialise the options property with some defaults
         this.options = $.extend({
             columns: [],
@@ -17,10 +19,12 @@ $.fn.AdaptableGrid = function (options) {
             sortable: false,
             pageable: false,
             reorderable: false,
-            filter: null,
-            edit: null,
-            search: null,
-            styles: null
+            ongridload: function () {},
+            ongridsort: function (sortData) {},
+            onpagechange: function (page) {},
+            oncellenter: function (cell) { },
+            oncellchange: function (cell) {},
+            oncolumnupdate: function (columns) {}
         }, options);
 
         this.columnValueToIndex = {};
@@ -47,6 +51,8 @@ $.fn.AdaptableGrid = function (options) {
         }
 
         this.read();
+        this.render(this.options.ongridload);
+        debug.end("AdaptableGrid.__constructor");
         return this;
         
     }
@@ -152,15 +158,28 @@ $.fn.AdaptableGrid = function (options) {
         }
 
         table += '</table>';
-
-        debug.end("AdaptableGrid.render");
-        
+       
         debug.start("AdaptableGrid.html");
         $(this).html(table);
         debug.end("AdaptableGrid.html");
+        debug.end("AdaptableGrid.render");
         
         this.applyStyles();
+        this.events();
 
+        if (callback) {
+            callback();
+        }
+
+    }
+
+    /**
+     * AdaptableGrid.events
+     * Associate the relavant events to paging, sorting, column reordering etc.
+     * @returns {void}
+     */
+    this.events = function () {
+        
         if (this.options.pageable) {
             PageUtil.addPages.bind(this)();
             PageUtil.events.bind(this)();
@@ -174,12 +193,9 @@ $.fn.AdaptableGrid = function (options) {
             ReorderUtil.events.bind(this)();
         }
 
+        PersistenceUtil.editing.bind(this)();
         PersistenceUtil.dates.bind(this)();
         PersistenceUtil.checkbox.bind(this)();
-
-        if (callback) {
-            callback();
-        }
 
     }
 
@@ -190,26 +206,43 @@ $.fn.AdaptableGrid = function (options) {
      */
     this.applyStyles = function () {
         $(this).addClass('blotter-grid');
-        $(this).find('.adaptablegrid-datepicker').each(function () {
-            el = $(this);
-            el.datepicker({
-                showOn: "button",
-                buttonImageOnly: true,
-                buttonImage: "calendar.png",
-                dateFormat: el.attr('blotter-format')
-            });
-        });
     }
 
     /**
-     * AdaptableGrid.findElement
+     * AdaptableGrid.uniqueColumnValues
+     * Returns an ordered array of the unique values in a column
+     * @param {string} column - The identifier of the column
+     * @returns {any[]}
+     */
+    this.uniqueColumnValues = function (column) {
+        var index = this.columns.indexOf(column);
+        SortUtil.getColumnIndexes.bind(this, index)();
+        return this.columnIndexToValue[index];
+    }
+
+    /**
+     * AdaptableGrid.cellToElement
      * Finds the HTML tag within the grid and returns the jQuery elements
      * @param {integer} row - The row of the cell
      * @param {integer} col - The column of the cell
      * @returns {jQuery}
      */
-    this.findElement = function (row, col) {
+    this.cellToElement = function (row, col) {
         return $(this).find('[blotter="abjs:' + row + ":" + col + '"]');
+    }
+
+    /**
+     * AdaptableGrid.elementToCell
+     * Returns the cell from the jQuery element
+     * @param {jQuery} el - The DOM element
+     * @returns {Cell}
+     */
+    this.elementToCell = function (el) {
+        blotter_id = $(el).attr('blotter');
+        parts = blotter_id.split('abjs:')[1].split(":");
+        row = parseInt(parts[0]);
+        col = parseInt(parts[1]);
+        return this.cells[row][col];
     }
 
     return this.__constructor(options);
