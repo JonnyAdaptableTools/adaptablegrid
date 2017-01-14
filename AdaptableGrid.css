@@ -21,6 +21,7 @@ body { color: #333; }
 .blotter-grid .adaptablegrid-page-prev:hover,.blotter-grid .adaptablegrid-page-next:hover{opacity:0.6;}
 .blotter-grid .adaptablegrid-page-disabled {border-color:transparent; cursor: default;}
 .blotter-grid .adaptablegrid-currentpage { display:inline-block; width:15px;}
+.blotter-grid td.abjs-editing input {outline: none;border: none;background: #ccc;padding: 5px 8px;margin: -13px -8px;position: absolute;width: 120px;}
 .ui-datepicker-calendar{padding:0;font-size:12px}
 a.ui-datepicker-next.ui-corner-all{position:absolute;right:10px}
 a.ui-datepicker-prev.ui-corner-all{position:absolute}
