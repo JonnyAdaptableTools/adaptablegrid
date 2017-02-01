@@ -106,16 +106,19 @@ $.fn.AdaptableGrid = function (options) {
     debug.start("AdaptableGrid.render");
 
     var table = '<table>';
+    displayedRows = 0;
+    rowCounter = -1;
 
     // Output all the cells
-    for (i=0; i<this.displayHeight; i++) {
+    while (displayedRows < this.displayHeight) {
 
-      var row = i;
+      rowCounter += 1;
+      thisRow = rowCounter;
 
       // Don't print if row is invisible
-      if (!this.getRow(i).isVisible()) continue;
+      if (!this.getRow(thisRow).isVisible()) continue;
 
-      if (row == 0) {
+      if (thisRow == 0) {
 
         for (j=0; j<this.width; j++) {
 
@@ -126,8 +129,8 @@ $.fn.AdaptableGrid = function (options) {
             table += '<thead>';
           }
 
-          table += '<th class="adaptablegrid adaptablegrid-header" blotter="abjs:' + row + ":" + j +'">'
-                + this.getRow(row).getCell(j).getFormattedValue(this) + '</th>';
+          table += '<th class="adaptablegrid adaptablegrid-header" blotter="abjs:' + thisRow + ":" + j +'">'
+                + this.getRow(thisRow).getCell(j).getFormattedValue(this) + '</th>';
 
           if (j == this.width-1) {
             table += '</thead><tbody>';
@@ -140,7 +143,7 @@ $.fn.AdaptableGrid = function (options) {
 
         // If dealing with pages, after printing the headers, jump to the relavant row
         if (this.options.pageable) {
-          row = (this.currentPage - 1) * (this.displayHeight - 1) + i;
+          thisRow = (this.currentPage - 1) * (this.displayHeight - 1) + thisRow;
         }
 
         for (j=0; j<this.width; j++) {
@@ -152,7 +155,7 @@ $.fn.AdaptableGrid = function (options) {
             table += '<tr>';
           }
 
-          table += '<td blotter="abjs:' + row + ":" + j +'">' + this.getRow(row).getCell(j).getFormattedValue(this) + '</td>';
+          table += '<td blotter="abjs:' + thisRow + ":" + j +'">' + this.getRow(thisRow).getCell(j).getFormattedValue(this) + '</td>';
 
           if (j == this.width-1) {
             table += '</tr>';
@@ -164,6 +167,8 @@ $.fn.AdaptableGrid = function (options) {
         }
 
       }
+
+      displayedRows += 1;
 
     }
 
