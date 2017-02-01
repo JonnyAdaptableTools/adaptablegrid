@@ -68,14 +68,14 @@ $.fn.AdaptableGrid = function (options) {
       
     for (i=0; i<this.height; i++) {
 
-      this.cells[i] = [];
+      this.cells[i] = new Row(i);
       
       if (i==0) {
         // This is the column headers
         for (j=0; j<this.width; j++) {
-          this.cells[i][j] = new Cell(i, j);
-          this.cells[i][j].setValue(options.columns[j].title);
-          this.cells[i][j].setFormat("$txt");
+          this.cells[i].setCell(j, new Cell(i, j));
+          this.cells[i].getCell(j).setValue(options.columns[j].title);
+          this.cells[i].getCell(j).setFormat("$txt");
           col = new Column(options.columns[j].field, options.columns[j].title, DataType.String);
           this.columns.push(col);
         }
@@ -83,9 +83,9 @@ $.fn.AdaptableGrid = function (options) {
       else {
         // Regular row
         for (j=0; j<this.width; j++) {
-          this.cells[i][j] = new Cell(i, j);
-          this.cells[i][j].setValue(options.data[i-1][options.columns[j].field]);
-          this.cells[i][j].setFormat(options.columns[j].format);
+          this.cells[i].setCell(j, new Cell(i, j));
+          this.cells[i].getCell(j).setValue(options.data[i-1][options.columns[j].field]);
+          this.cells[i].getCell(j).setFormat(options.columns[j].format);
         }
       }
 
@@ -124,7 +124,7 @@ $.fn.AdaptableGrid = function (options) {
           }
 
           table += '<th class="adaptablegrid adaptablegrid-header" blotter="abjs:' + row + ":" + j +'">'
-                + this.cells[row][j].getFormattedValue(this) + '</th>';
+                + this.cells[row].getCell(j).getFormattedValue(this) + '</th>';
 
           if (j == this.width-1) {
             table += '</thead><tbody>';
@@ -149,7 +149,7 @@ $.fn.AdaptableGrid = function (options) {
             table += '<tr>';
           }
 
-          table += '<td blotter="abjs:' + row + ":" + j +'">' + this.cells[row][j].getFormattedValue(this) + '</td>';
+          table += '<td blotter="abjs:' + row + ":" + j +'">' + this.cells[row].getCell(j).getFormattedValue(this) + '</td>';
 
           if (j == this.width-1) {
             table += '</tr>';
@@ -237,7 +237,7 @@ $.fn.AdaptableGrid = function (options) {
     parts = blotter_id.split('abjs:')[1].split(":");
     row = parseInt(parts[0]);
     col = parseInt(parts[1]);
-    return this.cells[row][col];
+    return this.cells[row].getCell(col);
   }
 
   /**
