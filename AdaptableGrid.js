@@ -116,6 +116,9 @@ $.fn.AdaptableGrid = function (options) {
 
         for (j=0; j<this.width; j++) {
 
+          // Don't print if column is invisible
+          if (!this.columns[j].isVisible()) continue;
+
           if (j == 0) {
             table += '<thead>';
           }
@@ -138,6 +141,9 @@ $.fn.AdaptableGrid = function (options) {
         }
 
         for (j=0; j<this.width; j++) {
+
+          // Don't print if column is invisible
+          if (!this.columns[j].isVisible()) continue;
 
           if (j == 0) {
             table += '<tr>';
