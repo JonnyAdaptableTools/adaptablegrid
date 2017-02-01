@@ -76,7 +76,8 @@ $.fn.AdaptableGrid = function (options) {
           this.cells[i][j] = new Cell(i, j);
           this.cells[i][j].setValue(options.columns[j].title);
           this.cells[i][j].setFormat("$txt");
-          this.columns.push(options.columns[j].field);
+          col = new Column(options.columns[j].field, options.columns[j].title, DataType.String);
+          this.columns.push(col);
         }
       }
       else {
@@ -209,18 +210,6 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.uniqueColumnValues
-   * Returns an ordered array of the unique values in a column
-   * @param {string} column - The identifier of the column
-   * @returns {any[]}
-   */
-  this.uniqueColumnValues = function (column) {
-    var index = this.columns.indexOf(column);
-    SortUtil.getColumnIndexes.bind(this, index)();
-    return this.columnIndexToValue[index];
-  }
-
-  /**
    * AdaptableGrid.cellToElement
    * Finds the HTML tag within the grid and returns the jQuery elements
    * @param {integer} row - The row of the cell
@@ -243,6 +232,42 @@ $.fn.AdaptableGrid = function (options) {
     row = parseInt(parts[0]);
     col = parseInt(parts[1]);
     return this.cells[row][col];
+  }
+
+  /**
+   * AdaptableGrid.getRow
+   * Returns an array of cells for this row
+   * @param {integer} id - The row identifier
+   * @returns {Cell[]}
+   */
+  this.getRow = function (row) {
+    return this.cells[row];
+  }
+
+  /**
+   * AdaptableGrid.getPositionOfColumn
+   * Returns the current placement of the column given by the identifier
+   * The first columns has position 0
+   * @param {Column} column - The column object
+   * @returns {integer}
+   */
+  this.getPositionOfColumn = function (column) {
+    return this.columns.indexOf(column);
+  }
+
+  /**
+   * AdaptableGrid.getColumnFromId
+   * Returns the Column object with the given columnId
+   * @param {string} columnId - The column identifier
+   * @returns {Column}
+   */
+  this.getColumnFromId = function (columnId) {
+    for (var i=0; i<this.columns.length; i++) {
+      if (this.columns[i].getId() == columnId) {
+        return this.columns[i];
+      }
+    }
+    return -1;
   }
 
   return this.__constructor(options);
