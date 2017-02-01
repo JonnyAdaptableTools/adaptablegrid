@@ -112,6 +112,9 @@ $.fn.AdaptableGrid = function (options) {
 
       var row = i;
 
+      // Don't print if row is invisible
+      if (!this.getRow(i).isVisible()) continue;
+
       if (row == 0) {
 
         for (j=0; j<this.width; j++) {
@@ -271,6 +274,32 @@ $.fn.AdaptableGrid = function (options) {
     for (var i=0; i<this.columns.length; i++) {
       if (this.columns[i].getId() == columnId) {
         return this.columns[i];
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * AdaptableGrid.getPositionOfRow
+   * Returns the current placement of the row given by the identifier
+   * The first row (i.e. header) has position 0
+   * @param {Row} row - The row object
+   * @returns {integer}
+   */
+  this.getPositionOfRow = function (row) {
+    return this.cells.indexOf(row);
+  }
+
+  /**
+   * AdaptableGrid.getRowFromId
+   * Returns the Row object with the given rowId
+   * @param {string} rowId - The row identifier
+   * @returns {Row}
+   */
+  this.getRowFromId = function (rowId) {
+    for (var i=0; i<this.cells.length; i++) {
+      if (this.getRow(i).getId() == rowId) {
+        return this.getRow(i);
       }
     }
     return -1;
