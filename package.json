@@ -1,5 +1,6 @@
 {
-    "name": "AdaptableBlotter HTML5 Grid",
-    "description": "A simple light-weight HTML5 grid with sorting, filtering and column reordering.",
-    "main": "AdaptableBlotter.js"
+  "name": "ab-html5grid",
+  "version": "1.0",
+  "description": "A simple light-weight HTML5 grid with sorting, filtering and column reordering.",
+  "main": "AdaptableBlotter.js"
 }
