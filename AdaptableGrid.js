@@ -30,8 +30,9 @@ $.fn.AdaptableGrid = function (options) {
     this.columnValueToIndex = {};
     this.columnIndexToValue = {};
 
-    this.cells = [];
+    this.rows = [];
     this.columns = [];
+    this.hiddenRows = [];
     
     this.width = options.columns.length;
     this.height = options.data.length + 1;
@@ -68,7 +69,7 @@ $.fn.AdaptableGrid = function (options) {
       
     for (i=0; i<this.height; i++) {
 
-      this.cells[i] = new Row(i);
+      this.rows[i] = new Row(i);
       
       if (i==0) {
         // This is the column headers
@@ -129,8 +130,9 @@ $.fn.AdaptableGrid = function (options) {
             table += '<thead>';
           }
 
-          table += '<th class="adaptablegrid adaptablegrid-header" blotter="abjs:' + thisRow + ":" + j +'">'
-                + this.getRow(thisRow).getCell(j).getFormattedValue(this) + '</th>';
+          rowObj = this.getRow(thisRow);
+          table += '<th class="adaptablegrid adaptablegrid-header" blotter="abjs:' + rowObj.getId() + ":" + j +'">'
+                + rowObj.getCell(j).getFormattedValue(this) + '</th>';
 
           if (j == this.width-1) {
             table += '</thead><tbody>';
@@ -155,7 +157,8 @@ $.fn.AdaptableGrid = function (options) {
             table += '<tr>';
           }
 
-          table += '<td blotter="abjs:' + thisRow + ":" + j +'">' + this.getRow(thisRow).getCell(j).getFormattedValue(this) + '</td>';
+          rowObj = this.getRow(thisRow);
+          table += '<td blotter="abjs:' + rowObj.getId() + ":" + j +'">' + rowObj.getCell(j).getFormattedValue(this) + '</td>';
 
           if (j == this.width-1) {
             table += '</tr>';
@@ -245,17 +248,17 @@ $.fn.AdaptableGrid = function (options) {
     parts = blotter_id.split('abjs:')[1].split(":");
     row = parseInt(parts[0]);
     col = parseInt(parts[1]);
-    return this.getRow(row).getCell(col);
+    return this.getRowFromId(row).getCell(col);
   }
 
   /**
    * AdaptableGrid.getRow
-   * Returns an array of cells for this row
-   * @param {integer} id - The row identifier
+   * Returns a Row object for this row
+   * @param {integer} index - The row index, after sorting/pages etc
    * @returns {Row}
    */
   this.getRow = function (row) {
-    return this.cells[row];
+    return this.rows[row];
   }
 
   /**
@@ -288,11 +291,12 @@ $.fn.AdaptableGrid = function (options) {
    * AdaptableGrid.getPositionOfRow
    * Returns the current placement of the row given by the identifier
    * The first row (i.e. header) has position 0
+   * Note: returns -1 if hidden
    * @param {Row} row - The row object
    * @returns {integer}
    */
   this.getPositionOfRow = function (row) {
-    return this.cells.indexOf(row);
+    return this.rows.indexOf(row);
   }
 
   /**
@@ -302,9 +306,14 @@ $.fn.AdaptableGrid = function (options) {
    * @returns {Row}
    */
   this.getRowFromId = function (rowId) {
-    for (var i=0; i<this.cells.length; i++) {
+    for (var i=0; i<this.rows.length; i++) {
       if (this.getRow(i).getId() == rowId) {
         return this.getRow(i);
+      }
+    }
+    for (var i=0; i<this.hiddenRows.length; i++) {
+      if (this.hiddenRows[i].getId() == rowId) {
+        return this.hiddenRows[i];
       }
     }
     return -1;
