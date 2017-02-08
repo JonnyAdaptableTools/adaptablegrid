@@ -87,8 +87,8 @@ $.fn.AdaptableGrid = function (options) {
         for (j=0; j<this.width; j++) {
           this.getRow(i).setCell(j, new Cell(i, j));
           this.getRow(i).getCell(j).setValue(options.columns[j].title);
-          this.getRow(i).getCell(j).setType("text");
-          col = new Column(options.columns[j].field, options.columns[j].title, DataType.String);
+          this.getRow(i).getCell(j).setType(DataType.String);
+          col = new Column(options.columns[j].field, options.columns[j].title, DataType.convert(options.columns[j].type));
           this.columns.push(col);
         }
       }
@@ -97,7 +97,7 @@ $.fn.AdaptableGrid = function (options) {
         for (j=0; j<this.width; j++) {
           this.getRow(i).setCell(j, new Cell(i, j));
           this.getRow(i).getCell(j).setValue(options.data[i-1][options.columns[j].field]);
-          this.getRow(i).getCell(j).setType(options.columns[j].type);
+          this.getRow(i).getCell(j).setType(DataType.convert(options.columns[j].type));
           this.getRow(i).getCell(j).setFormat(options.columns[j].format);
         }
       }
