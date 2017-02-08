@@ -143,8 +143,9 @@ $.fn.AdaptableGrid = function (options) {
           }
 
           rowObj = this.getRow(thisRow);
-          table += '<th class="adaptablegrid adaptablegrid-header" blotter="abjs:' + rowObj.getId() + ":" + j +'">'
-                + rowObj.getCell(j).getFormattedValue(this) + '</th>';
+          table += '<th class="adaptablegrid adaptablegrid-header ' + rowObj.getCell(j).cls.join(" ") + '" '
+                   + 'blotter="abjs:' + rowObj.getId() + ":" + j +'">'
+                   + rowObj.getCell(j).getFormattedValue(this) + '</th>';
 
           if (j == this.width-1) {
             table += '</thead><tbody>';
@@ -170,7 +171,8 @@ $.fn.AdaptableGrid = function (options) {
           }
 
           rowObj = this.getRow(thisRow);
-          table += '<td blotter="abjs:' + rowObj.getId() + ":" + j +'">' + rowObj.getCell(j).getFormattedValue(this) + '</td>';
+          table += '<td blotter="abjs:' + rowObj.getId() + ":" + j +'" ' 
+                   + 'class="' + rowObj.getCell(j).cls.join(" ") + '">' + rowObj.getCell(j).getFormattedValue(this) + '</td>';
 
           if (j == this.width-1) {
             table += '</tr>';
