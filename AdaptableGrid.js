@@ -51,6 +51,17 @@ $.fn.AdaptableGrid = function (options) {
       PageUtil.resetPages.bind(this)();
     }
 
+    // Fix for jQuery UI datepicker.
+    // Ensure that moment.js and jQuery are consistent with date formats
+    $(function () {
+      $.datepicker.parseDate = function(format, value) {
+          return moment(value, format).toDate();
+      };
+      $.datepicker.formatDate = function (format, value) {
+          return moment(value).format(format);
+      };
+    });
+
     this.read();
     this.render(this.options.ongridload);
     debug.end("AdaptableGrid.__constructor");
@@ -76,7 +87,7 @@ $.fn.AdaptableGrid = function (options) {
         for (j=0; j<this.width; j++) {
           this.getRow(i).setCell(j, new Cell(i, j));
           this.getRow(i).getCell(j).setValue(options.columns[j].title);
-          this.getRow(i).getCell(j).setFormat("$txt");
+          this.getRow(i).getCell(j).setType("text");
           col = new Column(options.columns[j].field, options.columns[j].title, DataType.String);
           this.columns.push(col);
         }
@@ -86,6 +97,7 @@ $.fn.AdaptableGrid = function (options) {
         for (j=0; j<this.width; j++) {
           this.getRow(i).setCell(j, new Cell(i, j));
           this.getRow(i).getCell(j).setValue(options.data[i-1][options.columns[j].field]);
+          this.getRow(i).getCell(j).setType(options.columns[j].type);
           this.getRow(i).getCell(j).setFormat(options.columns[j].format);
         }
       }
