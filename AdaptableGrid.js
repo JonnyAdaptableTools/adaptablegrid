@@ -23,7 +23,7 @@ $.fn.AdaptableGrid = function (options) {
       ongridsort: function (sortData) {},
       onpagechange: function (page) {},
       oncellenter: function (cell) { },
-      oncellchange: function (cell) {},
+      oncellchange: function (cell, newVal, oldVal) {},
       oncolumnupdate: function (columns) {}
     }, options);
 
