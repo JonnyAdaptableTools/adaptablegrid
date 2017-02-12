@@ -335,6 +335,42 @@ $.fn.AdaptableGrid = function (options) {
     }
   }
 
+  /**
+   * Returns the list of Rows which are visible
+   * @return {Row[]}
+   */
+  this.getVisibleRows = function () {
+    return this.rows;
+  }
+
+  /**
+   * Returns the list of Rows which are hidden
+   * @return {Row[]}
+   */
+  this.getHiddenRows = function () {
+    return this.hiddenRows;
+  }
+
+  /**
+   * Returns the list of Columns which are visible
+   * @return {Column[]}
+   */
+  this.getVisibleColumns = function () {
+    return $.grep(this.columns, function (i) {
+      return i.isVisible();
+    });
+  }
+
+  /**
+   * Returns the list of Columns which are hidden
+   * @return {Column[]}
+   */
+  this.getHiddenColumns = function () {
+    return $.grep(this.columns, function (i) {
+      return !i.isVisible();
+    });
+  }
+
   return this.__constructor(options);
 
 }
