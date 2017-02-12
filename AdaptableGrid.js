@@ -1,12 +1,11 @@
+/**
+ * The main class for interracting with the grid
+ * @class
+ * @param {object} options - A list of options
+ * @returns {AdaptableGrid}
+ */
 $.fn.AdaptableGrid = function (options) {
   
-  /**
-   * AdaptableGrid.__constructor
-   * Initialise the grid object
-   * @constructor
-   * @param {object} options - A list of options
-   * @returns {AdaptableGrid}
-   */
   this.__constructor = function (options) {
     
     debug.start("AdaptableGrid.__constructor");
@@ -70,7 +69,6 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.read
    * Reads in the data to create a singleton list of type Cell
    * @returns {void}
    */
@@ -88,7 +86,7 @@ $.fn.AdaptableGrid = function (options) {
           this.getRow(i).setCell(j, new Cell(i, j));
           this.getRow(i).getCell(j).setValue(options.columns[j].title);
           this.getRow(i).getCell(j).setType(DataType.String);
-          col = new Column(options.columns[j].field, options.columns[j].title, DataType.convert(options.columns[j].type));
+          col = new Column(options.columns[j].field, options.columns[j].title, this.getDataType(options.columns[j].type));
           this.columns.push(col);
         }
       }
@@ -97,7 +95,7 @@ $.fn.AdaptableGrid = function (options) {
         for (j=0; j<this.width; j++) {
           this.getRow(i).setCell(j, new Cell(i, j));
           this.getRow(i).getCell(j).setValue(options.data[i-1][options.columns[j].field]);
-          this.getRow(i).getCell(j).setType(DataType.convert(options.columns[j].type));
+          this.getRow(i).getCell(j).setType(this.getDataType(options.columns[j].type));
           this.getRow(i).getCell(j).setFormat(options.columns[j].format);
         }
       }
@@ -109,7 +107,6 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.render
    * Prints out the grid to the DOM
    * @param {function} [callback] - The function to run after rendering is finished
    * @returns {void}
@@ -206,7 +203,6 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.events
    * Associate the relavant events to paging, sorting, column reordering etc.
    * @returns {void}
    */
@@ -232,7 +228,6 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.applyStyles
    * Adds any styles necessary to cells
    * @returns {void}
    */
@@ -241,7 +236,6 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.cellToElement
    * Finds the HTML tag within the grid and returns the jQuery elements
    * @param {integer} row - The row of the cell
    * @param {integer} col - The column of the cell
@@ -252,7 +246,6 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.elementToCell
    * Returns the cell from the jQuery element
    * @param {jQuery} el - The DOM element
    * @returns {Cell}
@@ -266,7 +259,6 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.getRow
    * Returns a Row object for this row
    * @param {integer} index - The row index, after sorting/pages etc
    * @returns {Row}
@@ -276,10 +268,9 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.getPositionOfColumn
    * Returns the current placement of the column given by the identifier
    * The first columns has position 0
-   * @param {Column} column - The column object
+   * @param {Column} column - The column object 
    * @returns {integer}
    */
   this.getPositionOfColumn = function (column) {
@@ -287,7 +278,6 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.getColumnFromId
    * Returns the Column object with the given columnId
    * @param {string} columnId - The column identifier
    * @returns {Column}
@@ -302,7 +292,6 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.getPositionOfRow
    * Returns the current placement of the row given by the identifier
    * The first row (i.e. header) has position 0
    * Note: returns -1 if hidden
@@ -314,7 +303,6 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
-   * AdaptableGrid.getRowFromId
    * Returns the Row object with the given rowId
    * @param {string} rowId - The row identifier
    * @returns {Row}
@@ -331,6 +319,20 @@ $.fn.AdaptableGrid = function (options) {
       }
     }
     return -1;
+  }
+
+  /**
+   * Returns the DataType corresponding to the given configuration
+   * @param {string} type - The data type in string form
+   * @return {DataType}
+   */
+  this.getDataType = function (type) {
+    switch (type) {
+      case "text": return DataType.String;
+      case "num": return DataType.Number;
+      case "date": return DataType.Date;
+      case "checkbox": return DataType.Boolean;
+    }
   }
 
   return this.__constructor(options);

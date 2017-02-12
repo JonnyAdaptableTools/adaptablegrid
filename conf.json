@@ -1,0 +1,8 @@
+{
+  "source": {
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_",
+    "include": ["AdaptableGrid.js", "lib/"],
+    "exclude": ["jquery.js", "jquery-ui.min.js", "moment.min.js", "numeral.min.js"]
+  }
+}
