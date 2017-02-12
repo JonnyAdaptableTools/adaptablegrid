@@ -371,6 +371,27 @@ $.fn.AdaptableGrid = function (options) {
     });
   }
 
+  /**
+   * Reorders the table columns according to the input array
+   * @param {string[]} ids - The ordered column IDs
+   * @return {void}
+   */
+  this.newColumnOrder = function (ids) {
+    debug.start("AdaptableGrid.newColumnOrder");
+    for (var i=0; i<this.rows.length; i++) {
+      var newData = [];
+      for (var j=0; j<this.getRow(i).getData().length; j++) {
+        var newIndex = ids.indexOf(this.columns[j].getId());
+        newData[newIndex] = this.getRow(i).getCell(j);
+      }
+      this.rows[i].data = newData;
+    }
+    this.columns.sort(function (a, b) {
+      return ids.indexOf(b.getId()) - ids.indexOf(a.getId());
+    });
+    debug.end("AdaptableGrid.newColumnOrder");
+  }
+
   return this.__constructor(options);
 
 }
