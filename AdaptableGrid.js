@@ -23,7 +23,8 @@ $.fn.AdaptableGrid = function (options) {
       onpagechange: function (page) {},
       oncellenter: function (cell) { },
       oncellchange: function (cell, newVal, oldVal) {},
-      oncolumnupdate: function (columns) {}
+      oncolumnupdate: function (columns) {},
+      onrightclick: function (columnId) { }
     }, options);
 
     this.columnValueToIndex = {};
@@ -224,6 +225,14 @@ $.fn.AdaptableGrid = function (options) {
     PersistenceUtil.editing.bind(this)();
     PersistenceUtil.dates.bind(this)();
     PersistenceUtil.checkbox.bind(this)();
+
+    // Right click context menu
+    $(this).find('th.adaptablegrid-header').contextmenu(function (e) {
+      blotter_id = $(e.target).attr('blotter');
+      parts = blotter_id.split('abjs:')[1].split(":");
+      col = parseInt(parts[1]);
+      this.options.onrightclick(this.columns[col].getId());
+    }.bind(this));
 
   }
 
