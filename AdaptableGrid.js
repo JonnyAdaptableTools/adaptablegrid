@@ -159,6 +159,11 @@ $.fn.AdaptableGrid = function (options) {
           thisRow = (this.currentPage - 1) * (this.displayHeight - 1) + thisRow;
         }
 
+        // Exit if we've reached the end
+        if (thisRow >= this.rows.length) {
+          break;
+        }
+
         for (j=0; j<this.width; j++) {
 
           // Don't print if column is invisible
