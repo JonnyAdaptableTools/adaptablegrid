@@ -227,6 +227,18 @@ $.fn.AdaptableGrid = function (options) {
       ReorderUtil.events.bind(this)();
     }
 
+    // Selectable cells
+    $(this).find('tbody').selectable({
+      delay: 50,
+      stop: function(event, ui) {
+        $(document).click(function (e) {
+          if (!$(e.target).hasClass('ui-selectable')) {
+            $(this).find('.ui-selected').removeClass('ui-selected');
+          }
+        }.bind(this));
+      }.bind(this)
+    });
+
     PersistenceUtil.editing.bind(this)();
     PersistenceUtil.dates.bind(this)();
     PersistenceUtil.checkbox.bind(this)();
@@ -247,6 +259,19 @@ $.fn.AdaptableGrid = function (options) {
    */
   this.applyStyles = function () {
     $(this).addClass('blotter-grid');
+  }
+
+  /**
+   * Returns the selected cells
+   * @returns {Cell[]}
+   */
+  this.getSelectedCells = function () {
+    debug.start("AdaptableGrid.getSelectedCells");
+    els = $(blotter).find('td.ui-selected').map(function (i, el) {
+      return blotter.elementToCell(el);
+    });
+    debug.end("AdaptableGrid.getSelectedCells");
+    return els;
   }
 
   /**

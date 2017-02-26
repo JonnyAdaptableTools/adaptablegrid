@@ -14,6 +14,7 @@ body { color: #333; }
 .blotter-grid thead tr { background-color: #f6f6f6 !important; }
 .blotter-grid tr:hover { background-color: #eee; }
 .blotter-grid td { border-top: none; white-space: nowrap; padding: 8px 10px; }
+.blotter-grid td.ui-selecting,.blotter-grid td.ui-selected{background: #b2cede;}
 .blotter-grid td input[type="text"].invisible {border: none;background: none;outline: none;width: 100px;vertical-align: 2px;}
 .blotter-grid .adaptablegrid-pages{background: #f1f1f1;padding: 10px 15px;border: 1px solid #ddd;border-top: none;}
 .blotter-grid .adaptablegrid-page-prev,.blotter-grid .adaptablegrid-page-next{border: 10px solid transparent;border-left-color: #666;border-top-width: 7px;border-bottom-width: 7px;width: 0;height: 0;display: inline-block;vertical-align: -2px;cursor: pointer;margin-left: 20px;}
