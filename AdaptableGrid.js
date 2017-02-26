@@ -33,7 +33,8 @@ $.fn.AdaptableGrid = function (options) {
     this.rows = [];
     this.columns = [];
     this.hiddenRows = [];
-    
+    this.filteredOutRows = [];
+
     this.width = options.columns.length;
     this.height = options.data.length + 1;
     dimension = this.width * this.height;
@@ -45,11 +46,8 @@ $.fn.AdaptableGrid = function (options) {
       num = options.display;
     }
 
+    PageUtil.resetPages.bind(this)();
     this.displayHeight = num + 1;
-
-    if (this.options.pageable) {
-      PageUtil.resetPages.bind(this)();
-    }
 
     // Fix for jQuery UI datepicker.
     // Ensure that moment.js and jQuery are consistent with date formats
@@ -103,6 +101,8 @@ $.fn.AdaptableGrid = function (options) {
 
     }
 
+    this.filteredRows = this.rows;
+
     debug.end("AdaptableGrid.read");
 
   }
@@ -121,13 +121,10 @@ $.fn.AdaptableGrid = function (options) {
     rowCounter = -1;
 
     // Output all the cells
-    while (displayedRows < this.displayHeight) {
+    while (displayedRows < this.displayHeight && rowCounter < this.rows.length) {
 
       rowCounter += 1;
       thisRow = rowCounter;
-
-      // Don't print if row is invisible
-      if (!this.getRow(thisRow).isVisible()) continue;
 
       if (thisRow == 0) {
 
@@ -215,6 +212,7 @@ $.fn.AdaptableGrid = function (options) {
   this.events = function () {
     
     if (this.options.pageable) {
+      PageUtil.getTotalPages.bind(this)();
       PageUtil.addPages.bind(this)();
       PageUtil.events.bind(this)();
     }
@@ -357,6 +355,11 @@ $.fn.AdaptableGrid = function (options) {
         return this.hiddenRows[i];
       }
     }
+    for (var i=0; i<this.filteredOutRows.length; i++) {
+      if (this.filteredOutRows[i].getId() == rowId) {
+        return this.filteredOutRows[i];
+      }
+    }
     return -1;
   }
 
@@ -429,6 +432,32 @@ $.fn.AdaptableGrid = function (options) {
       return ids.indexOf(b.getId()) - ids.indexOf(a.getId());
     });
     debug.end("AdaptableGrid.newColumnOrder");
+  }
+
+  /**
+   * Clear filtered rows
+   * @returns {void}
+   */
+  this.clearFiltered = function () {
+    this.rows = this.rows.concat(this.filteredOutRows);
+    this.filteredOutRows = [];
+  }
+
+  /**
+   * Adds the given rows to the filteredRows array
+   * If the array is not empty already, only insert the intersection
+   * @param {Row[]} rs - The rows which passed the search/filter test
+   * @returns {void}
+   */
+  this.addFilter = function (rs) {
+    for (var i=1; i<this.rows.length; i++) {
+      thisRow = this.rows[i];
+      if (rs.indexOf(thisRow) == -1) {
+        this.rows.splice(i, 1);
+        this.filteredOutRows.push(thisRow);
+        i--;
+      }
+    }
   }
 
   return this.__constructor(options);
