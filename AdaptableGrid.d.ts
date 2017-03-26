@@ -36,6 +36,8 @@ declare namespace Grid {
         setFormat(format: string): void;
         getType(): string;
         getFormat(): string;
+        setReadOnly(): void;
+        isReadOnly(): boolean;
         getFormattedValue(grid: Grid): string;
 
     }

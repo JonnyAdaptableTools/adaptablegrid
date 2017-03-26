@@ -2,7 +2,7 @@
   "source": {
     "includePattern": ".+\\.js(doc|x)?$",
     "excludePattern": "(^|\\/|\\\\)_",
-    "include": ["Grid.js", "lib/"],
-    "exclude": ["jquery.js", "jquery-ui.min.js", "moment.min.js", "numeral.min.js"]
+    "include": ["lib/"],
+    "exclude": ["lib/jquery.js", "lib/jquery-ui.min.js", "lib/moment.min.js", "lib/numeral.min.js"]
   }
 }

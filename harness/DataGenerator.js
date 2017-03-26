@@ -11,7 +11,7 @@ var DataGenerator = {
    */
   columns: function () {
     return [
-      { field: "id", title: "Transaction", type: 'num', format: "0" },
+      { field: "id", title: "Transaction", type: 'num', format: "0", readonly: true },
       { field: "country", title: "Country", type: 'text' },
       { field: "currency", title: "Currency", type: 'text' },
       { field: "valuation", title: "Valuation", type: 'num', format: "0.000" },
