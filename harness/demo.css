@@ -13,7 +13,7 @@ body { color: #333; }
 .blotter-grid tr:nth-of-type(2n-1) {background-color: #f1f1f1;}
 .blotter-grid thead tr { background-color: #f6f6f6 !important; }
 .blotter-grid tr:hover { background-color: #eee; }
-.blotter-grid td { border-top: none; white-space: nowrap; padding: 8px 10px; }
+.blotter-grid td {border-top: none;white-space: nowrap;padding: 8px 10px;overflow: hidden;position: relative;}
 .blotter-grid td.ui-selecting,.blotter-grid td.ui-selected{background: #b2cede;}
 .blotter-grid td input[type="text"].invisible {border: none;background: none;outline: none;width: 100px;vertical-align: 2px;}
 .blotter-grid .Grid-pages{background: #f1f1f1;padding: 10px 15px;border: 1px solid #ddd;border-top: none;}
@@ -22,5 +22,5 @@ body { color: #333; }
 .blotter-grid .Grid-page-prev:hover,.blotter-grid .Grid-page-next:hover{opacity:0.6;}
 .blotter-grid .Grid-page-disabled {border-color:transparent; cursor: default;}
 .blotter-grid .Grid-currentpage { display:inline-block; width:15px;}
-.blotter-grid td.abjs-editing input {outline: none;border: none;background: #ccc;padding: 5px 8px;margin: -13px -8px;position: absolute;width: 120px;}
+.blotter-grid td.abjs-editing input {outline: none;border: none;background: #ccc;padding: 5px 8px;margin: -13px -8px;position: absolute;width: 120px;max-width: 100%;box-sizing: border-box;}
 .blotter-grid .noselect { -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;-moz-user-select: none; -ms-user-select: none; user-select: none;}
