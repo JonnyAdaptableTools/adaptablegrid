@@ -2,13 +2,13 @@
  * The main class for interracting with the grid
  * @class
  * @param {object} options - A list of options
- * @returns {AdaptableGrid}
+ * @returns {Grid}
  */
-$.fn.AdaptableGrid = function (options) {
+$.fn.Grid = function (options) {
   
   this.__constructor = function (options) {
     
-    debug.start("AdaptableGrid.__constructor");
+    debug.start("Grid.__constructor");
 
     // Initialise the options property with some defaults
     this.options = $.extend({
@@ -62,7 +62,7 @@ $.fn.AdaptableGrid = function (options) {
 
     this.read();
     this.render(this.options.ongridload);
-    debug.end("AdaptableGrid.__constructor");
+    debug.end("Grid.__constructor");
     return this;
     
   }
@@ -73,7 +73,7 @@ $.fn.AdaptableGrid = function (options) {
    */
   this.read = function () {
     
-    debug.start("AdaptableGrid.read");
+    debug.start("Grid.read");
       
     for (i=0; i<this.height; i++) {
 
@@ -103,7 +103,7 @@ $.fn.AdaptableGrid = function (options) {
 
     this.filteredRows = this.rows;
 
-    debug.end("AdaptableGrid.read");
+    debug.end("Grid.read");
 
   }
 
@@ -114,7 +114,7 @@ $.fn.AdaptableGrid = function (options) {
    */
   this.render = function (callback) {
     
-    debug.start("AdaptableGrid.render");
+    debug.start("Grid.render");
 
     var table = '<table>';
     displayedRows = 0;
@@ -138,7 +138,7 @@ $.fn.AdaptableGrid = function (options) {
           }
 
           rowObj = this.getRow(thisRow);
-          table += '<th class="adaptablegrid adaptablegrid-header ' + rowObj.getCell(j).cls.join(" ") + '" '
+          table += '<th class="Grid Grid-header ' + rowObj.getCell(j).cls.join(" ") + '" '
                    + 'blotter="abjs:' + rowObj.getId() + ":" + j +'">'
                    + rowObj.getCell(j).getFormattedValue(this) + '</th>';
 
@@ -191,10 +191,10 @@ $.fn.AdaptableGrid = function (options) {
 
     table += '</table>';
      
-    debug.start("AdaptableGrid.html");
+    debug.start("Grid.html");
     $(this).html(table);
-    debug.end("AdaptableGrid.html");
-    debug.end("AdaptableGrid.render");
+    debug.end("Grid.html");
+    debug.end("Grid.render");
     
     this.applyStyles();
     this.events();
@@ -242,7 +242,7 @@ $.fn.AdaptableGrid = function (options) {
     PersistenceUtil.checkbox.bind(this)();
 
     // Right click context menu
-    $(this).find('th.adaptablegrid-header').contextmenu(function (e) {
+    $(this).find('th.Grid-header').contextmenu(function (e) {
       blotter_id = $(e.target).attr('blotter');
       parts = blotter_id.split('abjs:')[1].split(":");
       col = parseInt(parts[1]);
@@ -264,11 +264,11 @@ $.fn.AdaptableGrid = function (options) {
    * @returns {Cell[]}
    */
   this.getSelectedCells = function () {
-    debug.start("AdaptableGrid.getSelectedCells");
+    debug.start("Grid.getSelectedCells");
     els = $(blotter).find('td.ui-selected').map(function (i, el) {
       return blotter.elementToCell(el);
     });
-    debug.end("AdaptableGrid.getSelectedCells");
+    debug.end("Grid.getSelectedCells");
     return els;
   }
 
@@ -394,11 +394,19 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
+   * Returns the list of all Columns
+   * @return {Column[]}
+   */
+  this.getAllColumns = function () {
+    return this.columns;
+  }
+
+  /**
    * Returns the list of Columns which are visible
    * @return {Column[]}
    */
   this.getVisibleColumns = function () {
-    return $.grep(this.columns, function (i) {
+    return $.grep(this.getAllColumns(), function (i) {
       return i.isVisible();
     });
   }
@@ -419,7 +427,7 @@ $.fn.AdaptableGrid = function (options) {
    * @return {void}
    */
   this.newColumnOrder = function (ids) {
-    debug.start("AdaptableGrid.newColumnOrder");
+    debug.start("Grid.newColumnOrder");
     for (var i=0; i<this.rows.length; i++) {
       var newData = [];
       for (var j=0; j<this.getRow(i).getData().length; j++) {
@@ -431,7 +439,7 @@ $.fn.AdaptableGrid = function (options) {
     this.columns.sort(function (a, b) {
       return ids.indexOf(b.getId()) - ids.indexOf(a.getId());
     });
-    debug.end("AdaptableGrid.newColumnOrder");
+    debug.end("Grid.newColumnOrder");
   }
 
   /**

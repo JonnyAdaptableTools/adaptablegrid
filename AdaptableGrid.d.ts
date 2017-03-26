@@ -1,6 +1,6 @@
-declare namespace AdaptableBlotterGrid {
+declare namespace Grid {
 
-    class AdaptableGrid {
+    class Grid {
 
         constructor(options: any);
         read(): void;
@@ -18,6 +18,7 @@ declare namespace AdaptableBlotterGrid {
         getDataType(type: string): DataType;
         getVisibleRows(): (Row)[];
         getHiddenRows(): (Row)[];
+        getAllColumns(): (Column)[];
         getVisibleColumns(): (Column)[];
         getHiddenColumns(): (Column)[];
         newColumnOrder(ids: string[]): void;
@@ -35,7 +36,7 @@ declare namespace AdaptableBlotterGrid {
         setFormat(format: string): void;
         getType(): string;
         getFormat(): string;
-        getFormattedValue(grid: AdaptableGrid): string;
+        getFormattedValue(grid: Grid): string;
 
     }
 
@@ -49,7 +50,7 @@ declare namespace AdaptableBlotterGrid {
         setVisible(): void;
         setHidden(): void;
         isVisible(): void;
-        addCSS(cls: string, grid: AdaptableGrid): void;
+        addCSS(cls: string, grid: Grid): void;
 
     }
 
@@ -101,20 +102,20 @@ declare namespace AdaptableBlotterGrid {
         addCell(cell: Cell): void;
         setCell(key: number, value: Cell): void;
         getCell(key: number): Cell;
-        setVisible(grid: AdaptableGrid): void;
-        setHidden(grid: AdaptableGrid): void;
+        setVisible(grid: Grid): void;
+        setHidden(grid: Grid): void;
         isVisible(): boolean;
-        addCSS(cls: string, grid: AdaptableGrid): void;
+        addCSS(cls: string, grid: Grid): void;
 
     }
 
     class Sorter {
         
         constructor(data: any[]);
-        process(grid: AdaptableGrid, callback?: void): void;
-        prepare(grid: AdaptableGrid): void;
-        cleanUp(grid: AdaptableGrid): void;
-        shuffle(grid: AdaptableGrid): void;
+        process(grid: Grid, callback?: void): void;
+        prepare(grid: Grid): void;
+        cleanUp(grid: Grid): void;
+        shuffle(grid: Grid): void;
 
     }
 

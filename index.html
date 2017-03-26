@@ -4,7 +4,7 @@
     <title>Adaptable BlotterJS HTML5 Grid</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
     <link rel="stylesheet" href="jquery-ui.css" />
-    <link rel="stylesheet" href="AdaptableGrid.css" />
+    <link rel="stylesheet" href="Grid.css" />
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="moment.min.js"></script>
     <script type="text/javascript" src="numeral.min.js"></script>
@@ -21,7 +21,7 @@
     <script type="text/javascript" src="lib/PersistenceUtil.js"></script>
     <script type="text/javascript" src="lib/ReorderUtil.js"></script>
     <script type="text/javascript" src="lib/DataGenerator.js"></script>
-    <script type="text/javascript" src="AdaptableGrid.js"></script>
+    <script type="text/javascript" src="Grid.js"></script>
   </head>
   <body>
     <grid></grid>
@@ -29,7 +29,7 @@
     var debug = new Debug(true);
     debug.multiple = false;
 
-    var blotter = $('grid').AdaptableGrid({
+    var blotter = $('grid').Grid({
       columns: DataGenerator.columns(),
       data: DataGenerator.generate(1000),
       display: 20,
