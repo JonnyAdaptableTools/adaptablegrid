@@ -1,8 +1,0 @@
-{
-  "source": {
-    "includePattern": ".+\\.js(doc|x)?$",
-    "excludePattern": "(^|\\/|\\\\)_",
-    "include": ["lib/"],
-    "exclude": ["lib/jquery.js", "lib/jquery-ui.min.js", "lib/moment.min.js", "lib/numeral.min.js"]
-  }
-}

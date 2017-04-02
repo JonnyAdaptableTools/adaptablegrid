@@ -1,6 +1,6 @@
-declare namespace Grid {
+declare namespace AdaptableGrid {
 
-    class Grid {
+    class AdaptableGrid {
 
         constructor(options: any);
         read(): void;
@@ -38,7 +38,7 @@ declare namespace Grid {
         getFormat(): string;
         setReadOnly(): void;
         isReadOnly(): boolean;
-        getFormattedValue(grid: Grid): string;
+        getFormattedValue(grid: AdaptableGrid): string;
 
     }
 
@@ -52,7 +52,7 @@ declare namespace Grid {
         setVisible(): void;
         setHidden(): void;
         isVisible(): void;
-        addCSS(cls: string, grid: Grid): void;
+        addCSS(cls: string, grid: AdaptableGrid): void;
 
     }
 
@@ -104,20 +104,20 @@ declare namespace Grid {
         addCell(cell: Cell): void;
         setCell(key: number, value: Cell): void;
         getCell(key: number): Cell;
-        setVisible(grid: Grid): void;
-        setHidden(grid: Grid): void;
+        setVisible(grid: AdaptableGrid): void;
+        setHidden(grid: AdaptableGrid): void;
         isVisible(): boolean;
-        addCSS(cls: string, grid: Grid): void;
+        addCSS(cls: string, grid: AdaptableGrid): void;
 
     }
 
     class Sorter {
         
         constructor(data: any[]);
-        process(grid: Grid, callback?: void): void;
-        prepare(grid: Grid): void;
-        cleanUp(grid: Grid): void;
-        shuffle(grid: Grid): void;
+        process(grid: AdaptableGrid, callback?: void): void;
+        prepare(grid: AdaptableGrid): void;
+        cleanUp(grid: AdaptableGrid): void;
+        shuffle(grid: AdaptableGrid): void;
 
     }
 
