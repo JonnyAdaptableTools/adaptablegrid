@@ -25,16 +25,17 @@
     <link rel="stylesheet" href="demo.css" />
     <script type="text/javascript" src="Debug.js"></script>
     <script type="text/javascript" src="DataGenerator.js"></script>
-    <script type="text/javascript" src="Currency.js"></script>
+    <script type="text/javascript" src="CurrencyUtil.js"></script>
 
   </head>
   <body>
     <grid></grid>
     <script type="text/javascript">
-    var debug = new Debug(true);
-    debug.multiple = false;
+    var d = new Debug(true);
+    d.multiple = false;
 
     var mygrid = $('grid').AdaptableGrid({
+      debug: d,
       columns: DataGenerator.columns(),
       data: DataGenerator.generate(1000),
       display: 20,

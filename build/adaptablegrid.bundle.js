@@ -579,11 +579,10 @@ return rf.abs=Wc,rf.add=Yc,rf.subtract=Zc,rf.as=cd,rf.asMilliseconds=$e,rf.asSec
 $.fn.AdaptableGrid = function (options) {
   
   this.__constructor = function (options) {
-    
-    debug.start("AdaptableGrid.__constructor");
 
     // Initialise the options property with some defaults
     this.options = $.extend({
+      debug: new (function () { this.start = function (a) {}; this.end = function(a) {} }),
       columns: [],
       data: [],
       display: null,
@@ -598,6 +597,8 @@ $.fn.AdaptableGrid = function (options) {
       oncolumnupdate: function (columns) {},
       onrightclick: function (columnId) { }
     }, options);
+
+    this.options.debug.start("AdaptableGrid.__constructor");
 
     this.columnValueToIndex = {};
     this.columnIndexToValue = {};
@@ -634,7 +635,7 @@ $.fn.AdaptableGrid = function (options) {
 
     this.read();
     this.render(this.options.ongridload);
-    debug.end("AdaptableGrid.__constructor");
+    this.options.debug.end("AdaptableGrid.__constructor");
     return this;
     
   }
@@ -645,7 +646,7 @@ $.fn.AdaptableGrid = function (options) {
    */
   this.read = function () {
     
-    debug.start("AdaptableGrid.read");
+    this.options.debug.start("AdaptableGrid.read");
       
     for (i=0; i<this.height; i++) {
 
@@ -678,7 +679,7 @@ $.fn.AdaptableGrid = function (options) {
 
     this.filteredRows = this.rows;
 
-    debug.end("AdaptableGrid.read");
+    this.options.debug.end("AdaptableGrid.read");
 
   }
 
@@ -689,7 +690,7 @@ $.fn.AdaptableGrid = function (options) {
    */
   this.render = function (callback) {
     
-    debug.start("AdaptableGrid.render");
+    this.options.debug.start("AdaptableGrid.render");
 
     var table = '<table>';
     displayedRows = 0;
@@ -766,10 +767,10 @@ $.fn.AdaptableGrid = function (options) {
 
     table += '</table>';
      
-    debug.start("AdaptableGrid.html");
+    this.options.debug.start("AdaptableGrid.html");
     $(this).html(table);
-    debug.end("AdaptableGrid.html");
-    debug.end("AdaptableGrid.render");
+    this.options.debug.end("AdaptableGrid.html");
+    this.options.debug.end("AdaptableGrid.render");
     
     this.applyStyles();
     this.events();
@@ -839,11 +840,11 @@ $.fn.AdaptableGrid = function (options) {
    * @returns {Cell[]}
    */
   this.getSelectedCells = function () {
-    debug.start("AdaptableGrid.getSelectedCells");
+    this.options.debug.start("AdaptableGrid.getSelectedCells");
     els = $(blotter).find('td.ui-selected').map(function (i, el) {
       return blotter.elementToCell(el);
     });
-    debug.end("AdaptableGrid.getSelectedCells");
+    this.options.debug.end("AdaptableGrid.getSelectedCells");
     return els;
   }
 
@@ -1002,7 +1003,7 @@ $.fn.AdaptableGrid = function (options) {
    * @return {void}
    */
   this.newColumnOrder = function (ids) {
-    debug.start("AdaptableGrid.newColumnOrder");
+    this.options.debug.start("AdaptableGrid.newColumnOrder");
     for (var i=0; i<this.rows.length; i++) {
       var newData = [];
       for (var j=0; j<this.getRow(i).getData().length; j++) {
@@ -1014,7 +1015,7 @@ $.fn.AdaptableGrid = function (options) {
     this.columns.sort(function (a, b) {
       return ids.indexOf(b.getId()) - ids.indexOf(a.getId());
     });
-    debug.end("AdaptableGrid.newColumnOrder");
+    this.options.debug.end("AdaptableGrid.newColumnOrder");
   }
 
   /**
@@ -1301,12 +1302,12 @@ var PageUtil = {
    * @returns {void}
    */
   nextPage: function () {
-    debug.start("PageUtil.nextPage");
+    this.options.debug.start("PageUtil.nextPage");
     if (this.currentPage < this.numberOfPages) {
       this.currentPage += 1;
       this.render(this.options.onpagechange.bind(this, this.currentPage));
     }
-    debug.end("PageUtil.nextPage");
+    this.options.debug.end("PageUtil.nextPage");
   },
 
   /**
@@ -1316,12 +1317,12 @@ var PageUtil = {
    * @returns {void}
    */
   prevPage: function () {
-    debug.start("PageUtil.prevPage");
+    this.options.debug.start("PageUtil.prevPage");
     if (this.currentPage > 1) {
       this.currentPage -= 1;
       this.render(this.options.onpagechange.bind(this, this.currentPage));
     }
-    debug.end("PageUtil.prevPage");
+    this.options.debug.end("PageUtil.prevPage");
   },
 
   /**
@@ -1424,7 +1425,7 @@ var PersistenceUtil = {
    * @returns {void}
    */
   editing: function () {
-    debug.start("PersistenceUtil.editing");
+    this.options.debug.start("PersistenceUtil.editing");
     
     $(this).find('tbody td[blotter]').each(function (i, e) {
       cell = this.elementToCell(e);
@@ -1440,7 +1441,7 @@ var PersistenceUtil = {
       }
     }.bind(this));
 
-    debug.end("PersistenceUtil.editing");
+    this.options.debug.end("PersistenceUtil.editing");
   },
 
   /**
@@ -1484,7 +1485,7 @@ var PersistenceUtil = {
    * @returns {void}
    */
   saveEdit: function (els) {
-    debug.start("PersistenceUtil.saveEdit");
+    this.options.debug.start("PersistenceUtil.saveEdit");
     $(els).each(function (i, e) {
       
       cell = this.elementToCell(e);
@@ -1506,7 +1507,7 @@ var PersistenceUtil = {
       }
       
     }.bind(this));
-    debug.end("PersistenceUtil.saveEdit");
+    this.options.debug.end("PersistenceUtil.saveEdit");
   },
 
   /**
@@ -1621,7 +1622,7 @@ var ReorderUtil = {
    */
   move: function (event, ui) {
     
-    debug.start("ReorderUtil.move");
+    this.options.debug.start("ReorderUtil.move");
     columnToInsert = parseInt($(ui.helper).attr('blotter').split("abjs:0:")[1]);
     insertAfter = parseInt($(this).find('.AdaptableGrid-dropafter').attr('blotter').split("abjs:0:")[1]);
     
@@ -1637,7 +1638,7 @@ var ReorderUtil = {
     }
     
     this.render(this.options.oncolumnupdate.bind(this, this.columns));
-    debug.end("ReorderUtil.move");
+    this.options.debug.end("ReorderUtil.move");
 
   }
 
@@ -1770,7 +1771,7 @@ var Sorter = function (data) {
    * @param {function} [callback] - The function to run after sorting is finished
    */
   this.process = function (grid, callback) {
-    debug.start("Sorter.process");
+    grid.options.debug.start("Sorter.process");
     if (typeof this.data == "function") {
       sortableRows = grid.rows.slice(1, grid.rows.length);
       sortableRows.sort(this.data);
@@ -1787,7 +1788,7 @@ var Sorter = function (data) {
     PageUtil.getTotalPages.bind(grid)();
     callback = callback || function () {};
     grid.render(callback.bind(grid));
-    debug.end("Sorter.process");
+    grid.options.debug.end("Sorter.process");
   }
 
   /**
@@ -1797,7 +1798,7 @@ var Sorter = function (data) {
    */
   this.prepare = function (grid) {
     
-    debug.start("Sorter.prepare");
+    grid.options.debug.start("Sorter.prepare");
     this.columnIndex = [];
     this.columnFormat = [];
     this.columnSortBy = [];
@@ -1828,7 +1829,7 @@ var Sorter = function (data) {
       }
 
     }
-    debug.end("Sorter.prepare");
+    grid.options.debug.end("Sorter.prepare");
 
   }
 
@@ -1838,13 +1839,13 @@ var Sorter = function (data) {
    * @returns {void}
    */
   this.cleanUp = function (grid) {
-    debug.start("Sorter.cleanUp");
+    grid.options.debug.start("Sorter.cleanUp");
     for (i=0; i<data.length; i++) {
       if (this.columnFormat[i] == DataType.String) {
         SortUtil.indexesToColumn.bind(grid, this.columnIndex[i])();
       }
     }
-    debug.end("Sorter.cleanUp");
+    grid.options.debug.end("Sorter.cleanUp");
   }
 
   /**
@@ -1855,7 +1856,7 @@ var Sorter = function (data) {
    */
   this.shuffle = function (grid) {
     
-    debug.start("Sort.shuffle");
+    grid.options.debug.start("Sort.shuffle");
 
     grid.rows.sort(function (a, b) {
       
@@ -1890,7 +1891,7 @@ var Sorter = function (data) {
       
     }.bind(this));
     
-    debug.end("Sort.shuffle");
+    grid.options.debug.end("Sort.shuffle");
 
   }
 
@@ -1952,12 +1953,12 @@ var SortUtil = {
    * @returns {void}
    */
   columnToIndexes: function (ind) {
-    debug.start("SortUtil.columnToIndexes");
+    this.options.debug.start("SortUtil.columnToIndexes");
     for (var i=1; i<this.rows.length; i++) {
       indexOfValue = this.columnValueToIndex[ind][this.getRow(i).getCell(ind).getRawValue()];
       this.getRow(i).getCell(ind).setValue(indexOfValue);
     }
-    debug.end("SortUtil.columnToIndexes");
+    this.options.debug.end("SortUtil.columnToIndexes");
   },
 
   /**
@@ -1968,11 +1969,11 @@ var SortUtil = {
    * @returns {void}
    */
   indexesToColumn: function (ind) {
-    debug.start("SortUtil.indexesToColumn");
+    this.options.debug.start("SortUtil.indexesToColumn");
     for (var i=1; i<this.rows.length; i++) {
       this.getRow(i).getCell(ind).setValue(this.columnIndexToValue[ind][this.getRow(i).getCell(ind).getRawValue()]);
     }
-    debug.end("SortUtil.indexesToColumn");
+    this.options.debug.end("SortUtil.indexesToColumn");
   },
 
   /**
@@ -1983,7 +1984,7 @@ var SortUtil = {
    * @returns {void}
    */
   getColumnIndexes: function (ind) {
-    debug.start("SortUtil.getColumnIndexes");
+    this.options.debug.start("SortUtil.getColumnIndexes");
     
     if (this.columnIndexToValue[ind] == null) {
 
@@ -2016,7 +2017,7 @@ var SortUtil = {
 
     }
 
-    debug.end("SortUtil.getColumnIndexes");
+    this.options.debug.end("SortUtil.getColumnIndexes");
   }
 
 }
