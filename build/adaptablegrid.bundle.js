@@ -1013,7 +1013,7 @@ $.fn.AdaptableGrid = function (options) {
       this.rows[i].data = newData;
     }
     this.columns.sort(function (a, b) {
-      return ids.indexOf(b.getId()) - ids.indexOf(a.getId());
+      return ids.indexOf(a.getId()) - ids.indexOf(b.getId());
     });
     this.options.debug.end("AdaptableGrid.newColumnOrder");
   }
