@@ -81,7 +81,7 @@ var Column = function (columnId, friendlyName, type) {
   this.addCSS = function (cls, grid) {
     var pos = grid.getPositionOfColumn(this);
     for (var row=0; row<grid.rows.length; row++) {
-      grid.getRow(row).getCell(pos).cls.push(cls);
+      grid.getRow(row).getCell(pos).addClass(cls);
     }
   }
 

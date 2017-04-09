@@ -96,7 +96,7 @@ var Row = function (rowId) {
    */
   this.addCSS = function (cls, grid) {
     for (var col=0; col<this.getData().length; col++) {
-      grid.getRow(this.getId()).getCell(col).cls.push(cls);
+      grid.getRow(this.getId()).getCell(col).addClass(cls);
     }
   }
 

@@ -22,6 +22,7 @@ declare namespace AdaptableGrid {
         getVisibleColumns(): (Column)[];
         getHiddenColumns(): (Column)[];
         newColumnOrder(ids: string[]): void;
+        useAllColumns(ids: string[]): string[];
         clearFiltered(): void;
         addFilter(rs: (Row)[]): void;
 
@@ -36,6 +37,8 @@ declare namespace AdaptableGrid {
         setFormat(format: string): void;
         getType(): string;
         getFormat(): string;
+        addClass(c: string): void;
+        getClasses(): string[];
         setReadOnly(): void;
         isReadOnly(): boolean;
         getFormattedValue(grid: AdaptableGrid): string;

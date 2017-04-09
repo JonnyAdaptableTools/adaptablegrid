@@ -132,21 +132,21 @@ $.fn.AdaptableGrid = function (options) {
 
       if (thisRow == 0) {
 
-        for (j=0; j<this.width; j++) {
-
-          // Don't print if column is invisible
-          if (!this.columns[j].isVisible()) continue;
+        for (j=0; j<this.getAllColumns().length; j++) {
 
           if (j == 0) {
             table += '<thead>';
           }
 
-          rowObj = this.getRow(thisRow);
-          table += '<th class="AdaptableGrid AdaptableGrid-header ' + rowObj.getCell(j).cls.join(" ") + '" '
-                   + 'blotter="abjs:' + rowObj.getId() + ":" + j +'">'
-                   + rowObj.getCell(j).getFormattedValue(this) + '</th>';
+          // Only print if column is visible
+          if (this.getAllColumns()[j].isVisible()) {
+            rowObj = this.getRow(thisRow);
+            table += '<th class="AdaptableGrid AdaptableGrid-header ' + rowObj.getCell(j).getClasses().join(" ") + '" '
+                    + 'blotter="abjs:' + rowObj.getId() + ":" + j +'">'
+                    + rowObj.getCell(j).getFormattedValue(this) + '</th>';
+          }
 
-          if (j == this.width-1) {
+          if (j == this.getAllColumns().length-1) {
             table += '</thead><tbody>';
           }
 
@@ -176,7 +176,7 @@ $.fn.AdaptableGrid = function (options) {
 
           rowObj = this.getRow(thisRow);
           table += '<td blotter="abjs:' + rowObj.getId() + ":" + j +'" ' 
-                   + 'class="' + rowObj.getCell(j).cls.join(" ") + '">' + rowObj.getCell(j).getFormattedValue(this) + '</td>';
+                   + 'class="' + rowObj.getCell(j).getClasses().join(" ") + '">' + rowObj.getCell(j).getFormattedValue(this) + '</td>';
 
           if (j == this.width-1) {
             table += '</tr>';
@@ -431,19 +431,49 @@ $.fn.AdaptableGrid = function (options) {
    * @return {void}
    */
   this.newColumnOrder = function (ids) {
+    if (ids.length != this.getAllColumns().length) {
+      order = this.useAllColumns(ids);
+    }
+
     this.options.debug.start("AdaptableGrid.newColumnOrder");
     for (var i=0; i<this.rows.length; i++) {
       var newData = [];
       for (var j=0; j<this.getRow(i).getData().length; j++) {
-        var newIndex = ids.indexOf(this.columns[j].getId());
+        var newIndex = order.indexOf(this.columns[j].getId());
         newData[newIndex] = this.getRow(i).getCell(j);
       }
       this.rows[i].data = newData;
     }
+    
     this.columns.sort(function (a, b) {
-      return ids.indexOf(a.getId()) - ids.indexOf(b.getId());
+      return order.indexOf(a.getId()) - order.indexOf(b.getId());
     });
+
     this.options.debug.end("AdaptableGrid.newColumnOrder");
+  }
+
+  /**
+   * Takes a string of column ids and adds to the end any unmentioned
+   * hidden/visible columns
+   * @param {string[]} ids - The list of column IDs
+   * @param {string[]}
+   */
+  this.useAllColumns = function (ids) {
+    this.options.debug.start("AdaptableGrid.useAllColumns");
+    visible = this.getVisibleColumns();
+    hidden = this.getHiddenColumns();
+    for (var i=0; i<visible.length; i++) {
+      if (ids.indexOf(visible[i].getId()) == -1) {
+        ids.push(visible[i].getId());
+      }
+    }
+    for (var j=0; j<hidden.length; j++) {
+      if (ids.indexOf(hidden[j].getId()) == -1) {
+        ids.push(hidden[j].getId());
+      }
+    }
+    this.options.debug.end("AdaptableGrid.useAllColumns");
+    return ids;
   }
 
   /**

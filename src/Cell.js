@@ -70,6 +70,23 @@ var Cell = function () {
   }
 
   /**
+   * Adds a CSS class style to this cell
+   * @param {string} c - The new class
+   * @returns {void}
+   */
+  this.addClass = function (c) {
+    this.cls.push(c);
+  }
+
+  /**
+   * Get the array of CSS classes
+   * @returns {string[]}
+   */
+  this.getClasses = function () {
+    return this.cls;
+  }
+
+  /**
    * Sets this cell to be read-only
    * @returns {void}
    */
