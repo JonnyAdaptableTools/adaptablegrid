@@ -1003,9 +1003,7 @@ $.fn.AdaptableGrid = function (options) {
    * @return {void}
    */
   this.newColumnOrder = function (ids) {
-    if (ids.length != this.getAllColumns().length) {
-      order = this.useAllColumns(ids);
-    }
+    order = this.useAllColumns(ids);
 
     this.options.debug.start("AdaptableGrid.newColumnOrder");
     for (var i=0; i<this.rows.length; i++) {
@@ -1031,6 +1029,9 @@ $.fn.AdaptableGrid = function (options) {
    * @param {string[]}
    */
   this.useAllColumns = function (ids) {
+    if (ids.length == this.getAllColumns().length) {
+      return ids;
+    }
     this.options.debug.start("AdaptableGrid.useAllColumns");
     visible = this.getVisibleColumns();
     hidden = this.getHiddenColumns();
