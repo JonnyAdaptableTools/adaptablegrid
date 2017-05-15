@@ -7,7 +7,7 @@ declare namespace AdaptableGrid {
         render(callback?: void): void;
         events(): void;
         applyStyles(): void;
-        getSelectedCells(): (Cell)[];
+        getSelectedCells(): any[];
         cellToElement(row: number, col: number): any;
         elementToCell(el: any): Cell;
         getRow(index: number): Row;
