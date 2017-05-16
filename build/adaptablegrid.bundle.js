@@ -592,10 +592,11 @@ $.fn.AdaptableGrid = function (options) {
       ongridload: function () {},
       ongridsort: function (sortData) {},
       onpagechange: function (page) {},
-      oncellenter: function (cell) { },
+      oncellenter: function (cell) {},
       oncellchange: function (cell, newVal, oldVal) {},
       oncolumnupdate: function (columns) {},
-      onrightclick: function (columnId) { }
+      onrightclick: function (columnId) {},
+      onkeydown: function (event) {}
     }, options);
 
     this.options.debug.start("AdaptableGrid.__constructor");
@@ -825,6 +826,11 @@ $.fn.AdaptableGrid = function (options) {
       this.options.onrightclick(this.columns[col].getId());
     }.bind(this));
 
+    // Add keydown event listener
+    $(this).keydown(function (event) {
+      this.options.onkeydown(event);
+    }.bind(this));
+
   }
 
   /**
@@ -966,11 +972,29 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
+   * Returns the list of all Rows
+   * not including the header
+   * @return {Row[]}
+   */
+  this.getAllRows = function () {
+    return this.getVisibleRows().concat(this.getHiddenRows());
+  }
+
+  /**
    * Returns the list of Rows which are visible
+   * Don't include the headers
    * @return {Row[]}
    */
   this.getVisibleRows = function () {
-    return this.rows;
+    return this.rows.slice(1);
+  }
+
+  /**
+   * Returns the header row
+   * @return {Row}
+   */
+  this.getHeaderRow = function () {
+    return this.rows[0];
   }
 
   /**
@@ -1162,12 +1186,35 @@ var Cell = function () {
   }
 
   /**
-   * Adds a CSS class style to this cell
+   * Adds a CSS class style to this cell if not already there
    * @param {string} c - The new class
    * @returns {void}
    */
   this.addClass = function (c) {
-    this.cls.push(c);
+    if (!this.hasClass(c)) {
+      this.cls.push(c);
+    }
+  }
+
+  /**
+   * Returns whether or not the current class is a css style
+   * @param {string} c - The new class
+   * @returns {boolean}
+   */
+  this.hasClass = function (c) {
+    return this.cls.indexOf(c) > -1;
+  }
+
+  /**
+   * Removes a css style from a class
+   * @param {string} c - The new class
+   * @returns {void}
+   */
+  this.removeClass = function (c) {
+    var index = this.cls.indexOf(c);
+    if (index > -1) {
+      this.cls.splice(index, 1);
+    }
   }
 
   /**
@@ -1301,10 +1348,23 @@ var Column = function (columnId, friendlyName, type) {
    * @param {AdaptableGrid} grid - The reference to the grid
    * @returns {void}
    */
-  this.addCSS = function (cls, grid) {
+  this.addClass = function (cls, grid) {
     var pos = grid.getPositionOfColumn(this);
     for (var row=0; row<grid.rows.length; row++) {
       grid.getRow(row).getCell(pos).addClass(cls);
+    }
+  }
+
+  /**
+   * Removes a class from all the cells in the column
+   * @param {string} class - The class name
+   * @param {AdaptableGrid} grid - The reference to the grid
+   * @returns {void}
+   */
+  this.removeClass = function (cls, grid) {
+    var pos = grid.getPositionOfColumn(this);
+    for (var row=0; row<grid.rows.length; row++) {
+      grid.getRow(row).getCell(pos).removeClass(cls);
     }
   }
 
@@ -1799,9 +1859,21 @@ var Row = function (rowId) {
    * @param {AdaptableGrid} grid - The reference to the grid
    * @returns {void}
    */
-  this.addCSS = function (cls, grid) {
+  this.addClass = function (cls, grid) {
     for (var col=0; col<this.getData().length; col++) {
       grid.getRow(this.getId()).getCell(col).addClass(cls);
+    }
+  }
+
+  /**
+   * Removes a class from all the cells in the row
+   * @param {string} class - The class name
+   * @param {AdaptableGrid} grid - The reference to the grid
+   * @returns {void}
+   */
+  this.removeClass = function (cls, grid) {
+    for (var col=0; col<this.getData().length; col++) {
+      grid.getRow(this.getId()).getCell(col).removeClass(cls);
     }
   }
 
