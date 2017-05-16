@@ -34,7 +34,9 @@ declare namespace AdaptableGrid {
     setFormat(format: string): void;
     getType(): string;
     getFormat(): string;
+    hasClass(c: string): boolean;
     addClass(c: string): void;
+    removeClass(c: string): void;
     getClasses(): string[];
     setReadOnly(): void;
     isReadOnly(): boolean;
@@ -50,7 +52,8 @@ declare namespace AdaptableGrid {
     setVisible(): void;
     setHidden(): void;
     isVisible(): void;
-    addCSS(cls: string, grid: AdaptableGrid): void;
+    addClass(cls: string, grid: AdaptableGrid): void;
+    removeClass(cls: string, grid: AdaptableGrid): void;
   }
 
   interface DataType {
@@ -79,7 +82,8 @@ declare namespace AdaptableGrid {
     setVisible(grid: AdaptableGrid): void;
     setHidden(grid: AdaptableGrid): void;
     isVisible(): boolean;
-    addCSS(cls: string, grid: AdaptableGrid): void;
+    addClass(cls: string, grid: AdaptableGrid): void;
+    removeClass(cls: string, grid: AdaptableGrid): void;
   }
 
   class Sorter { 

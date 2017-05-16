@@ -70,12 +70,35 @@ var Cell = function () {
   }
 
   /**
-   * Adds a CSS class style to this cell
+   * Adds a CSS class style to this cell if not already there
    * @param {string} c - The new class
    * @returns {void}
    */
   this.addClass = function (c) {
-    this.cls.push(c);
+    if (!this.hasClass(c)) {
+      this.cls.push(c);
+    }
+  }
+
+  /**
+   * Returns whether or not the current class is a css style
+   * @param {string} c - The new class
+   * @returns {boolean}
+   */
+  this.hasClass = function (c) {
+    return this.cls.indexOf(c) > -1;
+  }
+
+  /**
+   * Removes a css style from a class
+   * @param {string} c - The new class
+   * @returns {void}
+   */
+  this.removeClass = function (c) {
+    var index = this.cls.indexOf(c);
+    if (index > -1) {
+      this.cls.splice(index, 1);
+    }
   }
 
   /**

@@ -94,9 +94,21 @@ var Row = function (rowId) {
    * @param {AdaptableGrid} grid - The reference to the grid
    * @returns {void}
    */
-  this.addCSS = function (cls, grid) {
+  this.addClass = function (cls, grid) {
     for (var col=0; col<this.getData().length; col++) {
       grid.getRow(this.getId()).getCell(col).addClass(cls);
+    }
+  }
+
+  /**
+   * Removes a class from all the cells in the row
+   * @param {string} class - The class name
+   * @param {AdaptableGrid} grid - The reference to the grid
+   * @returns {void}
+   */
+  this.removeClass = function (cls, grid) {
+    for (var col=0; col<this.getData().length; col++) {
+      grid.getRow(this.getId()).getCell(col).removeClass(cls);
     }
   }
 

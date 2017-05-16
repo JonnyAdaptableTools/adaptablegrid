@@ -78,10 +78,23 @@ var Column = function (columnId, friendlyName, type) {
    * @param {AdaptableGrid} grid - The reference to the grid
    * @returns {void}
    */
-  this.addCSS = function (cls, grid) {
+  this.addClass = function (cls, grid) {
     var pos = grid.getPositionOfColumn(this);
     for (var row=0; row<grid.rows.length; row++) {
       grid.getRow(row).getCell(pos).addClass(cls);
+    }
+  }
+
+  /**
+   * Removes a class from all the cells in the column
+   * @param {string} class - The class name
+   * @param {AdaptableGrid} grid - The reference to the grid
+   * @returns {void}
+   */
+  this.removeClass = function (cls, grid) {
+    var pos = grid.getPositionOfColumn(this);
+    for (var row=0; row<grid.rows.length; row++) {
+      grid.getRow(row).getCell(pos).removeClass(cls);
     }
   }
 
