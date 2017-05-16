@@ -394,6 +394,15 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
+   * Returns the list of all Rows
+   * not including the header
+   * @return {Row[]}
+   */
+  this.getAllRows = function () {
+    return this.getVisibleRows().concat(this.getHiddenRows());
+  }
+
+  /**
    * Returns the list of Rows which are visible
    * Don't include the headers
    * @return {Row[]}
