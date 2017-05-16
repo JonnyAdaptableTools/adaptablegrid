@@ -20,10 +20,11 @@ $.fn.AdaptableGrid = function (options) {
       ongridload: function () {},
       ongridsort: function (sortData) {},
       onpagechange: function (page) {},
-      oncellenter: function (cell) { },
+      oncellenter: function (cell) {},
       oncellchange: function (cell, newVal, oldVal) {},
       oncolumnupdate: function (columns) {},
-      onrightclick: function (columnId) { }
+      onrightclick: function (columnId) {},
+      onkeydown: function (event) {}
     }, options);
 
     this.options.debug.start("AdaptableGrid.__constructor");
@@ -251,6 +252,11 @@ $.fn.AdaptableGrid = function (options) {
       parts = blotter_id.split('abjs:')[1].split(":");
       col = parseInt(parts[1]);
       this.options.onrightclick(this.columns[col].getId());
+    }.bind(this));
+
+    // Add keydown event listener
+    $(this).keydown(function (event) {
+      this.options.onkeydown(event);
     }.bind(this));
 
   }
