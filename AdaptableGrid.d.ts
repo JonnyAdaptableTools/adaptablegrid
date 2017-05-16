@@ -14,6 +14,7 @@ declare namespace AdaptableGrid {
     getRowFromId(rowId: string): Row;
     getDataType(type: string): DataType;
     getVisibleRows(): (Row)[];
+    getHeaderRow(): Row;
     getHiddenRows(): (Row)[];
     getAllColumns(): (Column)[];
     getVisibleColumns(): (Column)[];
