@@ -24,6 +24,7 @@ declare namespace AdaptableGrid {
     useAllColumns(ids: string[]): string[];
     clearFiltered(): void;
     addFilter(rs: (Row)[]): void;
+    getActiveCell(): (Row)[];
   }
 
   class Cell {

@@ -24,7 +24,7 @@ $.fn.AdaptableGrid = function (options) {
       oncellchange: function (cell, newVal, oldVal) {},
       oncolumnupdate: function (columns) {},
       onrightclick: function (columnId) {},
-      onkeydown: function (event) {}
+      onkeydown: function (keyCode, cell) {}
     }, options);
 
     this.options.debug.start("AdaptableGrid.__constructor");
@@ -256,7 +256,15 @@ $.fn.AdaptableGrid = function (options) {
 
     // Add keydown event listener
     $(this).keydown(function (event) {
-      this.options.onkeydown(event);
+      editingCell = null;
+      if ($(event.target).parents('td[blotter]').size()) {
+        blotter_id = $(event.target).parents('td[blotter]').attr('blotter');
+        parts = blotter_id.split('abjs:')[1].split(":");
+        rowId = parseInt(parts[0]);
+        colPos = parseInt(parts[1]);
+        editingCell = this.getRowFromId(rowId).getCell(colPos);
+      }
+      this.options.onkeydown(event.keyCode || event.which, editingCell);
     }.bind(this));
 
   }
@@ -348,6 +356,17 @@ $.fn.AdaptableGrid = function (options) {
       }
     }
     return -1;
+  }
+
+  /**
+   * Returns the cell currently being edited
+   * Null if no cell is active
+   */
+  this.getActiveCell = function () {
+    if ($(this).find('.abjs-editing').size()) {
+      return this.elementToCell($(this).find('.abjs-editing'));
+    }
+    return null;
   }
 
   /**
