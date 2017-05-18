@@ -163,10 +163,10 @@ var Cell = function () {
     switch (this.type) {
       case DataType.Number:
         if (this.format == "" || this.format == null || this.format == undefined) {
-          return this.getRawValue();
+          return this.getRawValue().toString();
         }
         else {
-          return numeral(this.getRawValue()).format(this.format);
+          return numeral(this.getRawValue()).format(this.format).toString();
         }
       case DataType.Date:
         return '<input type="text" class="invisible AdaptableGrid-datepicker" blotter-format="'+this.format+'"' +
@@ -174,7 +174,7 @@ var Cell = function () {
       case DataType.Boolean:
         return '<input type="checkbox" class="AdaptableGrid-checkbox" '+(this.getRawValue() ? 'checked="checked"' : '')+' />';
       default:
-        return this.getRawValue();
+        return this.getRawValue().toString();
     }
   }
 
