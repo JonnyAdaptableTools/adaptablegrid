@@ -596,7 +596,7 @@ $.fn.AdaptableGrid = function (options) {
       oncellchange: function (cell, newVal, oldVal) {},
       oncolumnupdate: function (columns) {},
       onrightclick: function (columnId) {},
-      onkeydown: function (event) {}
+      onkeydown: function (keyCode, cell) {}
     }, options);
 
     this.options.debug.start("AdaptableGrid.__constructor");
@@ -656,7 +656,8 @@ $.fn.AdaptableGrid = function (options) {
       if (i==0) {
         // This is the column headers
         for (j=0; j<this.width; j++) {
-          this.getRow(i).setCell(j, new Cell(i, j));
+          this.getRow(i).setCell(j, new Cell());
+          this.getRow(i).getCell(j).setRowCol(i, options.columns[j].field);
           this.getRow(i).getCell(j).setValue(options.columns[j].title);
           this.getRow(i).getCell(j).setType(DataType.String);
           col = new Column(options.columns[j].field, options.columns[j].title, this.getDataType(options.columns[j].type));
@@ -666,7 +667,8 @@ $.fn.AdaptableGrid = function (options) {
       else {
         // Regular row
         for (j=0; j<this.width; j++) {
-          this.getRow(i).setCell(j, new Cell(i, j));
+          this.getRow(i).setCell(j, new Cell());
+          this.getRow(i).getCell(j).setRowCol(i, options.columns[j].field);
           this.getRow(i).getCell(j).setValue(options.data[i-1][options.columns[j].field]);
           this.getRow(i).getCell(j).setType(this.getDataType(options.columns[j].type));
           this.getRow(i).getCell(j).setFormat(options.columns[j].format);
@@ -828,7 +830,15 @@ $.fn.AdaptableGrid = function (options) {
 
     // Add keydown event listener
     $(this).keydown(function (event) {
-      this.options.onkeydown(event);
+      editingCell = null;
+      if ($(event.target).parents('td[blotter]').size()) {
+        blotter_id = $(event.target).parents('td[blotter]').attr('blotter');
+        parts = blotter_id.split('abjs:')[1].split(":");
+        rowId = parseInt(parts[0]);
+        colPos = parseInt(parts[1]);
+        editingCell = this.getRowFromId(rowId).getCell(colPos);
+      }
+      this.options.onkeydown(event.keyCode || event.which, editingCell);
     }.bind(this));
 
   }
@@ -844,22 +854,13 @@ $.fn.AdaptableGrid = function (options) {
   /**
    * Returns the selected cells
    * Each element of the array contains the Cell object and the row, col
-   * @example [{ row: 2, col: 4, cell: Cell@0kAq2 }]
    * @returns {object[]}
    */
   this.getSelectedCells = function () {
     this.options.debug.start("AdaptableGrid.getSelectedCells");
     var selected = [];
     els = $(this).find('td.ui-selected').map(function (i, el) {
-      blotter_id = $(el).attr('blotter');
-      parts = blotter_id.split('abjs:')[1].split(":");
-      r = parseInt(parts[0]);
-      c = parseInt(parts[1]);
-      selected.push({
-        row: r,
-        col: c,
-        cell: this.getRowFromId(r).getCell(c)
-      });
+      selected.push(this.elementToCell(el));
       return;
     }.bind(this));
     this.options.debug.end("AdaptableGrid.getSelectedCells");
@@ -923,14 +924,27 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
+   * Returns the cell currently being edited
+   * Null if no cell is active
+   */
+  this.getActiveCell = function () {
+    if ($(this).find('.abjs-editing').size()) {
+      return this.elementToCell($(this).find('.abjs-editing'));
+    }
+    return null;
+  }
+
+  /**
    * Returns the current placement of the row given by the identifier
-   * The first row (i.e. header) has position 0
+   * Does NOT include the header, i.e. the first row of data has position 0
    * Note: returns -1 if hidden
    * @param {Row} row - The row object
    * @returns {integer}
    */
   this.getPositionOfRow = function (row) {
-    return this.rows.indexOf(row);
+    var pos = this.rows.indexOf(row);
+    if (pos == -1) return pos;
+    else return pos-1;
   }
 
   /**
@@ -1124,6 +1138,35 @@ var Cell = function () {
   this.__constructor = function () {
     this.cls = [];
     this.readonly = false;
+    this.rowId = null;
+    this.colId = null;
+  }
+
+  /**
+   * Sets the row and column Ids of this cell
+   * @param {any} rowId - the row ID
+   * @param {any} colId - the column ID
+   * @returns {void}
+   */
+  this.setRowCol = function (row, col) {
+    this.rowId = row;
+    this.colId = col;
+  }
+
+  /**
+   * Gets the row Id of this cell
+   * @returns {any}
+   */
+  this.getRowId = function () {
+    return this.rowId;
+  }
+
+  /**
+   * Gets the column Id of this cell
+   * @returns {any}
+   */
+  this.getColId = function () {
+    return this.colId;
   }
 
   /**
@@ -1262,6 +1305,21 @@ var Cell = function () {
         return '<input type="checkbox" class="AdaptableGrid-checkbox" '+(this.getRawValue() ? 'checked="checked"' : '')+' />';
       default:
         return this.getRawValue();
+    }
+  }
+
+  /**
+   * Get the row and column indexes of this cell
+   * as well as its row and column Ids
+   * @param {AdaptableGrid} grid - A reference to the grid
+   * @returns {any}
+   */
+  this.getCoords = function (grid) {
+    return {
+      rowId: this.getRowId(),
+      colId: this.getColId(),
+      colIndex: grid.getPositionOfColumn(grid.getColumnFromId(this.getColId())),
+      rowIndex: grid.getPositionOfRow(grid.getRowFromId(this.getRowId()))
     }
   }
 

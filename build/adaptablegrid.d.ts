@@ -4,7 +4,7 @@ declare namespace AdaptableGrid {
     constructor(options: any);
     read(): void;
     render(callback?: void): void;
-    getSelectedCells(): any[];
+    getSelectedCells(): (Cell)[];
     cellToElement(row: number, col: number): any;
     elementToCell(el: any): Cell;
     getRow(index: number): Row;
@@ -24,6 +24,7 @@ declare namespace AdaptableGrid {
     useAllColumns(ids: string[]): string[];
     clearFiltered(): void;
     addFilter(rs: (Row)[]): void;
+    getActiveCell(): (Row)[];
   }
 
   class Cell {
@@ -41,6 +42,9 @@ declare namespace AdaptableGrid {
     setReadOnly(): void;
     isReadOnly(): boolean;
     getFormattedValue(grid: AdaptableGrid): string;
+    getCoords(grid: AdaptableGrid): any[];
+    getRowId(): any;
+    getColId(): any;
   }
 
   class Column {
