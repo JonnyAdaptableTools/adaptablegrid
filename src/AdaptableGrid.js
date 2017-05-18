@@ -282,22 +282,13 @@ $.fn.AdaptableGrid = function (options) {
   /**
    * Returns the selected cells
    * Each element of the array contains the Cell object and the row, col
-   * @example [{ row: 2, col: 4, cell: Cell@0kAq2 }]
    * @returns {object[]}
    */
   this.getSelectedCells = function () {
     this.options.debug.start("AdaptableGrid.getSelectedCells");
     var selected = [];
     els = $(this).find('td.ui-selected').map(function (i, el) {
-      blotter_id = $(el).attr('blotter');
-      parts = blotter_id.split('abjs:')[1].split(":");
-      r = parseInt(parts[0]);
-      c = parseInt(parts[1]);
-      selected.push({
-        row: r,
-        col: c,
-        cell: this.getRowFromId(r).getCell(c)
-      });
+      selected.push(this.elementToCell(el));
       return;
     }.bind(this));
     this.options.debug.end("AdaptableGrid.getSelectedCells");

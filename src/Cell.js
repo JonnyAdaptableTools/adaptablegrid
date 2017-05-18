@@ -9,7 +9,7 @@ var Cell = function () {
     this.cls = [];
     this.readonly = false;
     this.rowId = null;
-    this.columnId = null;
+    this.colId = null;
   }
 
   /**
