@@ -84,7 +84,8 @@ $.fn.AdaptableGrid = function (options) {
       if (i==0) {
         // This is the column headers
         for (j=0; j<this.width; j++) {
-          this.getRow(i).setCell(j, new Cell(i, j));
+          this.getRow(i).setCell(j, new Cell());
+          this.getRow(i).getCell(j).setRowCol(i, options.columns[j].field);
           this.getRow(i).getCell(j).setValue(options.columns[j].title);
           this.getRow(i).getCell(j).setType(DataType.String);
           col = new Column(options.columns[j].field, options.columns[j].title, this.getDataType(options.columns[j].type));
@@ -94,7 +95,8 @@ $.fn.AdaptableGrid = function (options) {
       else {
         // Regular row
         for (j=0; j<this.width; j++) {
-          this.getRow(i).setCell(j, new Cell(i, j));
+          this.getRow(i).setCell(j, new Cell());
+          this.getRow(i).getCell(j).setRowCol(i, options.columns[j].field);
           this.getRow(i).getCell(j).setValue(options.data[i-1][options.columns[j].field]);
           this.getRow(i).getCell(j).setType(this.getDataType(options.columns[j].type));
           this.getRow(i).getCell(j).setFormat(options.columns[j].format);
@@ -371,13 +373,15 @@ $.fn.AdaptableGrid = function (options) {
 
   /**
    * Returns the current placement of the row given by the identifier
-   * The first row (i.e. header) has position 0
+   * Does NOT include the header, i.e. the first row of data has position 0
    * Note: returns -1 if hidden
    * @param {Row} row - The row object
    * @returns {integer}
    */
   this.getPositionOfRow = function (row) {
-    return this.rows.indexOf(row);
+    var pos = this.rows.indexOf(row);
+    if (pos == -1) return pos;
+    else return pos-1;
   }
 
   /**

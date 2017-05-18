@@ -42,6 +42,9 @@ declare namespace AdaptableGrid {
     setReadOnly(): void;
     isReadOnly(): boolean;
     getFormattedValue(grid: AdaptableGrid): string;
+    getCoords(grid: AdaptableGrid): any[];
+    getRowId(): any;
+    getColId(): any;
   }
 
   class Column {

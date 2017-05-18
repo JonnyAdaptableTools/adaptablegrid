@@ -8,6 +8,35 @@ var Cell = function () {
   this.__constructor = function () {
     this.cls = [];
     this.readonly = false;
+    this.rowId = null;
+    this.columnId = null;
+  }
+
+  /**
+   * Sets the row and column Ids of this cell
+   * @param {any} rowId - the row ID
+   * @param {any} colId - the column ID
+   * @returns {void}
+   */
+  this.setRowCol = function (row, col) {
+    this.rowId = row;
+    this.colId = col;
+  }
+
+  /**
+   * Gets the row Id of this cell
+   * @returns {any}
+   */
+  this.getRowId = function () {
+    return this.rowId;
+  }
+
+  /**
+   * Gets the column Id of this cell
+   * @returns {any}
+   */
+  this.getColId = function () {
+    return this.colId;
   }
 
   /**
@@ -146,6 +175,21 @@ var Cell = function () {
         return '<input type="checkbox" class="AdaptableGrid-checkbox" '+(this.getRawValue() ? 'checked="checked"' : '')+' />';
       default:
         return this.getRawValue();
+    }
+  }
+
+  /**
+   * Get the row and column indexes of this cell
+   * as well as its row and column Ids
+   * @param {AdaptableGrid} grid - A reference to the grid
+   * @returns {any}
+   */
+  this.getCoords = function (grid) {
+    return {
+      rowId: this.getRowId(),
+      colId: this.getColId(),
+      colIndex: grid.getPositionOfColumn(grid.getColumnFromId(this.getColId())),
+      rowIndex: grid.getPositionOfRow(grid.getRowFromId(this.getRowId()))
     }
   }
 
