@@ -852,6 +852,30 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
+   * Returns data about the current cell being edited
+   * @returns {object}
+   */
+  this.getCurrentEditor = function () {
+    var input = this.cellToElement(this.getActiveCell()).find('input');
+    if (input.size() == 0) return null;
+    return {
+      "editingCell": this.getActiveCell(),
+      "storedRawVal": this.getActiveCell().getRawValue(),
+      "storedFormattedVal": this.getActiveCell().getFormattedValue(),
+      "editVal": input.val()
+    }
+  }
+
+  /**
+   * Cancels the editing mode in any set
+   * Sets the value of the cell to whatever is in the edit box
+   * @returns {void}
+   */
+  this.exitCurrentEditor = function () {
+    PersistenceUtil.saveEdit.bind(this, $(this).find('.abjs-editing'))();
+  }
+
+  /**
    * Returns the selected cells
    * Each element of the array contains the Cell object and the row, col
    * @returns {object[]}
@@ -869,12 +893,12 @@ $.fn.AdaptableGrid = function (options) {
 
   /**
    * Finds the HTML tag within the grid and returns the jQuery elements
-   * @param {integer} row - The row of the cell
-   * @param {integer} col - The column of the cell
+   * @param {integer} cell - The cell
    * @returns {jQuery}
    */
-  this.cellToElement = function (row, col) {
-    return $(this).find('[blotter="abjs:' + row + ":" + col + '"]');
+  this.cellToElement = function (cell) {
+    coords = cell.getCoords(this);
+    return $(this).find('[blotter="abjs:' + coords.rowId + ":" + coords.colIndex + '"]');
   }
 
   /**
@@ -1705,7 +1729,7 @@ var PersistenceUtil = {
         dateFormat: el.attr('blotter-format'),
         beforeShow: function (e, o) {
           a = $(e).parents('[blotter]');
-          this.options.oncellenter(this.cellToElement($(e).parents('[blotter]')));
+          this.options.oncellenter(this.elementToCell($(e).parents('[blotter]')));
         }.bind(this)
       });
     }
@@ -2126,10 +2150,14 @@ var SortUtil = {
       c = 'AdaptableGrid-sort-asc';
     }
     
-    var s = new Sorter([{ column: this.columns[columnIndex], order: (c == 'AdaptableGrid-sort-asc') }]);
+    var s = new Sorter([{
+      column: this.columns[columnIndex],
+      order: (c == 'AdaptableGrid-sort-asc')
+    }]);
     
     s.process(this, function () {
-      this.cellToElement(0, columnIndex).addClass('AdaptableGrid-sort').addClass(c);
+      var headerCell = this.getRow(0).getCell(columnIndex);
+      this.cellToElement(headerCell).addClass('AdaptableGrid-sort').addClass(c);
       this.options.ongridsort(s.data);
     });
 
