@@ -36,10 +36,14 @@ var SortUtil = {
       c = 'AdaptableGrid-sort-asc';
     }
     
-    var s = new Sorter([{ column: this.columns[columnIndex], order: (c == 'AdaptableGrid-sort-asc') }]);
+    var s = new Sorter([{
+      column: this.columns[columnIndex],
+      order: (c == 'AdaptableGrid-sort-asc')
+    }]);
     
     s.process(this, function () {
-      this.cellToElement(0, columnIndex).addClass('AdaptableGrid-sort').addClass(c);
+      var headerCell = this.getRow(0).getCell(columnIndex);
+      this.cellToElement(headerCell).addClass('AdaptableGrid-sort').addClass(c);
       this.options.ongridsort(s.data);
     });
 

@@ -280,6 +280,30 @@ $.fn.AdaptableGrid = function (options) {
   }
 
   /**
+   * Returns data about the current cell being edited
+   * @returns {object}
+   */
+  this.getCurrentEditor = function () {
+    var input = this.cellToElement(this.getActiveCell()).find('input');
+    if (input.size() == 0) return null;
+    return {
+      "editingCell": this.getActiveCell(),
+      "storedRawVal": this.getActiveCell().getRawValue(),
+      "storedFormattedVal": this.getActiveCell().getFormattedValue(),
+      "editVal": input.val()
+    }
+  }
+
+  /**
+   * Cancels the editing mode in any set
+   * Sets the value of the cell to whatever is in the edit box
+   * @returns {void}
+   */
+  this.exitCurrentEditor = function () {
+    PersistenceUtil.saveEdit.bind(this, $(this).find('.abjs-editing'))();
+  }
+
+  /**
    * Returns the selected cells
    * Each element of the array contains the Cell object and the row, col
    * @returns {object[]}
@@ -297,12 +321,12 @@ $.fn.AdaptableGrid = function (options) {
 
   /**
    * Finds the HTML tag within the grid and returns the jQuery elements
-   * @param {integer} row - The row of the cell
-   * @param {integer} col - The column of the cell
+   * @param {integer} cell - The cell
    * @returns {jQuery}
    */
-  this.cellToElement = function (row, col) {
-    return $(this).find('[blotter="abjs:' + row + ":" + col + '"]');
+  this.cellToElement = function (cell) {
+    coords = cell.getCoords(this);
+    return $(this).find('[blotter="abjs:' + coords.rowId + ":" + coords.colIndex + '"]');
   }
 
   /**

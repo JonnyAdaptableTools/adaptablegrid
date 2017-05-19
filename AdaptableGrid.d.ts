@@ -5,7 +5,7 @@ declare namespace AdaptableGrid {
     read(): void;
     render(callback?: void): void;
     getSelectedCells(): (Cell)[];
-    cellToElement(row: number, col: number): any;
+    cellToElement(cell: Cell): any;
     elementToCell(el: any): Cell;
     getRow(index: number): Row;
     getPositionOfColumn(column: Column): number;
@@ -25,6 +25,8 @@ declare namespace AdaptableGrid {
     clearFiltered(): void;
     addFilter(rs: (Row)[]): void;
     getActiveCell(): Cell;
+    getCurrentEditor(): any;
+    exitCurrentEditor(): void;
   }
 
   class Cell {

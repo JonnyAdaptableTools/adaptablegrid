@@ -113,7 +113,7 @@ var PersistenceUtil = {
         dateFormat: el.attr('blotter-format'),
         beforeShow: function (e, o) {
           a = $(e).parents('[blotter]');
-          this.options.oncellenter(this.cellToElement($(e).parents('[blotter]')));
+          this.options.oncellenter(this.elementToCell($(e).parents('[blotter]')));
         }.bind(this)
       });
     }
