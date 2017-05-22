@@ -160,6 +160,12 @@ var Cell = function () {
    * @returns {string}
    */
   this.getFormattedValue = function (grid) {
+
+    // Check for empty or nulls
+    if (this.getRawValue() == null || this.getRawValue() == "") {
+      return "";
+    }
+
     switch (this.type) {
       case DataType.Number:
         if (this.format == "" || this.format == null || this.format == undefined) {
@@ -176,6 +182,7 @@ var Cell = function () {
       default:
         return this.getRawValue().toString();
     }
+
   }
 
   /**
