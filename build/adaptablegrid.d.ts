@@ -62,12 +62,12 @@ declare namespace AdaptableGrid {
     removeClass(cls: string, grid: AdaptableGrid): void;
   }
 
-  interface DataType {
-    String: number;
-    Number: number;
-    Boolean: number;
-    Date: number;
-    Object: number;
+  enum DataType {
+    String = 0,
+    Number = 1,
+    Boolean = 2,
+    Date = 3,
+    Object = 4
   }
 
   class PageUtil {
