@@ -2,5 +2,13 @@
   "name": "ab-html5grid",
   "version": "1.0",
   "description": "A simple light-weight HTML5 grid with sorting, filtering and column reordering.",
-  "main": "AdaptableBlotter.js"
+  "main": "AdaptableBlotter.js",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^3.9.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-strip-css-comments": "^1.2.0",
+    "gulp-uglify": "^3.0.0"
+  }
 }
