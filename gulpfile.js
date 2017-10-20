@@ -37,7 +37,7 @@ gulp.task('build_css', function () {
 gulp.task('build_assets', function () {
   gulp.src('harness/calendar.png')
       .pipe(gulp.dest(dest));
-  gulp.src('AdaptableGrid.d.ts')
+  gulp.src('src/AdaptableGrid.d.ts')
       .pipe(rename('adaptablegrid.d.ts'))
       .pipe(gulp.dest(dest));
 });
