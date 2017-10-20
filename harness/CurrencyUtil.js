@@ -21,6 +21,7 @@ var CurrencyUtil = {
     }
   },
 
+  
   /**
    * A list of all currency data
    * @static
