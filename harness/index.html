@@ -5,11 +5,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
     
     <!-- source files -->
-    <link rel="stylesheet" href="../src/jquery-ui.css" />
-    <script type="text/javascript" src="../src/jquery.min.js"></script>
-    <script type="text/javascript" src="../src/moment.min.js"></script>
-    <script type="text/javascript" src="../src/numeral.min.js"></script>
-    <script type="text/javascript" src="../src/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="../src/ExtLibs/jquery-ui.css" />
+    <script type="text/javascript" src="../src/ExtLibs/jquery.min.js"></script>
+    <script type="text/javascript" src="../src/ExtLibs/moment.min.js"></script>
+    <script type="text/javascript" src="../src/ExtLibs/numeral.min.js"></script>
+    <script type="text/javascript" src="../src/ExtLibs/jquery-ui.min.js"></script>
     <script type="text/javascript" src="../src/DataType.js"></script>
     <script type="text/javascript" src="../src/Row.js"></script>
     <script type="text/javascript" src="../src/Column.js"></script>
@@ -37,10 +37,10 @@
     var mygrid = $('grid').AdaptableGrid({
       debug: d,
       columns: DataGenerator.columns(),
-      data: DataGenerator.generate(1000),
-      display: 20,
+      data: DataGenerator.generate(500),
+      display: 500,
       sortable: true,
-      pageable: true,
+      pageable: false,
       reorderable: true
     });
     </script>

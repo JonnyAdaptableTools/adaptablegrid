@@ -6,8 +6,8 @@ var clean_css = require('gulp-clean-css');
 var remove_css_comments = require('gulp-strip-css-comments');
 
 var dest = './build/';
-var jsincludes = ['src/jquery.min.js', 'src/jquery*.js', 'src/*.min.js', 'src/*.js'];
-var cssincludes = ['src/*.css', 'harness/*.css'];
+var jsincludes = ['src/ExtLibs/jquery.min.js', 'src/ExtLibs/jquery*.js', 'src/ExtLibs/*.min.js', 'src/ExtLibs/*.js', 'src/*.js'];
+var cssincludes = ['src/ExtLibs/*.css', 'harness/*.css'];
 var basename = 'adaptablegrid.bundle';
 var js_bundle = basename + '.js';
 var js_min = basename + '.min.js';
