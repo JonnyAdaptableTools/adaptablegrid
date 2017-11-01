@@ -37,11 +37,11 @@ var DataGenerator = {
     for (var i = 0; i < numberOfRows; i++) {
       var row = {};
       rndNo = DataGenerator.getRndNumber(0, arrCurrencies.length);
-      row["id"] = i;
+      row["id"] = i+1;
       row["currency"] = arrCurrencies[rndNo];
       row["price"] = (Math.random() * DataGenerator.getRndNumber(0, 1000));
       row["country"] = arrCountries[rndNo];
-      row["valuation"] = Math.random() * DataGenerator.getRndNumber(0, 50) * (i+1);
+      row["valuation"] = Math.random() * (i+1);
       row["created"] = DataGenerator.randomDate(new Date(2000, 1, 1), new Date());
       row["paid"] = Math.round(Math.random());
       data.push(row);
