@@ -1372,6 +1372,7 @@ var Column = function (columnId, friendlyName, type) {
     this.friendlyName = friendlyName;
     this.type = type;
     this.visible = true;
+    this.readOnly = false;
   }
 
   /**
@@ -1425,11 +1426,36 @@ var Column = function (columnId, friendlyName, type) {
 
   /**
    * Returns whether this column is visible
-   * @returns {void}
+   * @returns {boolean}
    */
   this.isVisible = function () {
     return this.visible;
   }
+
+  /**
+   * set to be editable
+   * @returns {void}
+   */
+  this.setColumnNotReadOnly = function () {
+    this.readOnly = true;
+  }
+
+  /**
+   * forbid editing on this column
+   * @returns {void}
+   */
+  this.setColumnReadOnly = function () {
+    this.readOnly = false;
+  }
+
+  /**
+   * Returns whether this column is editable
+   * @returns {boolean}
+   */
+  this.isColumnReadOnly = function () {
+    return this.readOnly;
+  }
+
 
   /**
    * Adds a class to all the cells in the column

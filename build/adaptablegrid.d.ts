@@ -57,7 +57,10 @@ declare namespace AdaptableGrid {
     getType(): DataType;
     setVisible(): void;
     setHidden(): void;
-    isVisible(): void;
+    isVisible(): boolean;
+    setEditable(): void;
+    setNonEditable(): void;
+    isEditable(): boolean;
     addClass(cls: string, grid: AdaptableGrid): void;
     removeClass(cls: string, grid: AdaptableGrid): void;
   }
